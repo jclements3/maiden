@@ -13,24 +13,24 @@ owns).
 
 ## Tasks
 
-- [ ] Implement `firmware/timebase/pps_discipline.vhd` to the lesson's
+- [x] Implement `firmware/timebase/pps_discipline.vhd` to the lesson's
       pinned entity: generics RTC_HZ / LOCK_TOL; 2-FF sync + rising-edge
       detect on async `pps_in`; free-running 48-bit RTC (Ch. 10 header
       width — maiden40's recorder consumes it directly); per-PPS interval
       measurement into `offset`; `locked` = last 3 intervals within
       ±LOCK_TOL; watchdog (> 1.5 s) clears `locked` for holdover.
-- [ ] Note the 10 MHz derivation for hardware (12 MHz osc → PLL ×5 →
+- [x] Note the 10 MHz derivation for hardware (12 MHz osc → PLL ×5 →
       ÷6) in the header comment; simulation drives clk directly.
-- [ ] Start `timebase_tb.vhd` with a simulated GPS: PPS process with
+- [x] Start `timebase_tb.vhd` with a simulated GPS: PPS process with
       programmable period error and jitter via generics (deterministic —
       no `now`-based randomness, CI needs repeatability).
-- [ ] TB case, nominal: PPS at exactly 1 s → `locked` within 3 s;
+- [x] TB case, nominal: PPS at exactly 1 s → `locked` within 3 s;
       SYS-006-tagged asserts.
-- [ ] TB case, crystal offset +30 ppm: `offset` reports ≈ +300; still
+- [x] TB case, crystal offset +30 ppm: `offset` reports ≈ +300; still
       locked at LOCK_TOL 500.
-- [ ] TB case, holdover: kill PPS 10 s → `locked` drops, RTC and outputs
+- [x] TB case, holdover: kill PPS 10 s → `locked` drops, RTC and outputs
       carry on; PPS returns → relock, no discontinuity assert fires.
-- [ ] Makefile per the phase1 pattern; `make sim` target.
+- [x] Makefile per the phase1 pattern; `make sim` target.
 
 ## Done when
 
@@ -47,3 +47,12 @@ owns).
 
 SYS-006, D6 §IRIG-B time source, D4 §Time and synchronization (station
 side), D5 risk R3; feeds VT-02.
+
+---
+**Execution notes (2026-08-21, sim run on VALKYRIE):** all tasks done;
+`make sim` green — 15/15 SYS-006 cases (T1–T15 shared TB with maiden38),
+4m03s wall. Deviation: the TB runs the generics at RTC_HZ = 1_000_000 so
+the 32-second scenario simulates in minutes; all durations derive from one
+SEC constant and the +30 ppm case asserts offset = 30 ppm x RTC_HZ (= +30
+here, = the card's +300 at the hardware's 10 MHz) — physics identical,
+documented in the TB header. LOCK_TOL scaled to 50 (same 50 ppm).

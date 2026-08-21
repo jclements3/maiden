@@ -28,8 +28,9 @@ checksum before trusting a frame; SEQ gaps are logged, never fatal.
 | TYPE | Name | Rate | Payload | Producer |
 |---|---|---|---|---|
 | 0x01 | DOPPLER_V | 50 Hz | 9 bytes, below | doppler_core (maiden35) |
-| 0x02 | TIME_STATUS | 1 Hz | reserved — maiden38 | timebase FPGA |
-| 0x03 | FRAME_LATCH | per video frame | reserved — maiden38 | timebase FPGA |
+| 0x10 | PPS_STATUS | 1 Hz | 4 bytes, below | timebase FPGA (maiden38) |
+| 0x11 | TIME_MARK | 1 Hz (per PPS) | 10 bytes, below | timebase FPGA (maiden38) |
+| 0x12 | STROBE_STAMP | per video frame | 9 bytes, below | timebase FPGA (maiden38) |
 | 0x04 | STATION_STATUS | 1 Hz | reserved — maiden40 | recorder SBC |
 
 ### 0x01 DOPPLER_V payload (9 bytes, little-endian)
@@ -47,3 +48,26 @@ divisions in fabric. When `flags.det_valid = 0` the record still ships at
 50 Hz (v_cm = 0, bin = 0): "SNR below threshold" is a report, not
 silence, so the recorder's Ch 4 stays gap-free and lesson 13's EKF can
 skip the update explicitly.
+
+### Timebase record payloads (0x10-0x12, merged from maiden38)
+
+All multi-byte fields little-endian, matching the doppler records.
+
+| Type | Name         | Payload | Fields |
+|------|--------------|---------|--------|
+| 0x10 | PPS_STATUS   | 4 B     | offset: s20 (counts vs RTC_HZ, sign-extended into 3 B); flags: u8 = {bit0 locked, bit1 holdover (watchdog tripped), bit2 pps_seen_since_reset} |
+| 0x11 | TIME_MARK    | 10 B    | pps_rtc: u48 (RTC at last PPS edge); tod_secs: u17 + tod_day: u9 packed into u32 (bits 0-16 seconds-of-day, bits 17-25 day-of-year) |
+| 0x12 | STROBE_STAMP | 9 B     | rtc: u48; seq: u16; flags: u8 = {bit0 fifo_overflow (sticky)} |
+
+Producer notes:
+
+- `TIME_MARK` is emitted once per PPS (or once per free-running top of
+  second in holdover) and is the recorder's source for the Ch 1 time
+  packet: it pairs the absolute second with its RTC value — the option-2
+  discipline contract (RTC free-running, mapping published).
+- `PPS_STATUS` is emitted at 1 Hz into the Ch 6 status payload (PPS lock
+  bit per IF-1) alongside battery/temp/disk from the SBC side.
+- `STROBE_STAMP` records drain the strobe_latch FIFO; `seq` counts every
+  strobe including dropped ones, so ingest can detect drops even after an
+  overflow (the sticky flag says *that* stamps were lost, `seq` gaps say
+  *which*).
