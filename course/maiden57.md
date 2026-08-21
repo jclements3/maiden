@@ -14,20 +14,20 @@ Build section, and Verify items 3–5.
 
 **Tasks**
 
-- [ ] `software/maiden/rules.py`: `load_rules(path) -> FieldRules`;
+- [x] `software/maiden/rules.py`: `load_rules(path) -> FieldRules`;
       `check(samples, rules) -> list[Event]`. Schema: named polygons in
       field-frame ENU with a rule class and plain-language name;
       placeholder set ships with `status: PLACEHOLDER_PENDING_SURVEY`,
       which the report surfaces.
-- [ ] Crossing detection: segment-vs-polygon intersection on the FUSED
+- [x] Crossing detection: segment-vs-polygon intersection on the FUSED
       track with a few samples of hysteresis (covariance-wide jitter at
       a boundary must not emit twenty Events). Each crossing is
       `Event(kind="RULE_CROSSING", ...)` — informational; the report
       wording must match D9's "MAIDEN does not adjudicate".
-- [ ] Rules test: a twin flight scripted through a placeholder no-fly
+- [x] Rules test: a twin flight scripted through a placeholder no-fly
       polygon yields exactly one enter and one exit Event with sensible
       time/location; a clean flight yields none.
-- [ ] `maiden run --session DIR` in `cli.py`: ingest → track (skipped
+- [x] `maiden run --session DIR` in `cli.py`: ingest → track (skipped
       when twin sessions carry tracker channels) → fuse → maneuvers →
       score → approach → rules → report; one PDF + sidecar per detected
       flight; stage-by-stage wall-clock table printed at the end. Match
@@ -38,7 +38,7 @@ Build section, and Verify items 3–5.
       machine**). If total + a realistic SD-copy estimate exceeds ~7 of
       the 10 minutes, profile now — video decode and figure rendering
       are the usual suspects.
-- [ ] Explore: lesson 24's sidecar-archaeology exercise — a script that
+- [x] Explore: lesson 24's sidecar-archaeology exercise — a script that
       answers "how has my loop roundness trended across sessions?" from
       sidecars alone; fix the sidecar schema now if it can't.
 
@@ -57,3 +57,26 @@ Build section, and Verify items 3–5.
 survey, per D5 change control), SYS-011; VT-23/VT-24 (field
 demonstrations in Phase 2 — today rehearses both); D9 §Session workflow
 step 6.
+
+
+---
+
+**Execution notes (maiden57, desk).** All tasks done; 7 tests in
+test_rules.py + 10 in test_runner.py. Design finding of record: pure
+sample-count hysteresis provably fails jitter sitting ON a boundary (a
+run of N same-side samples every ~2^N samples) — check() carries a
+spatial deadband (hysteresis_margin_m, default 2 m) plus the sample
+streak; the failing scenario is kept as the regression test. rcrc.yaml
+now ships the placeholder runway + polygons + flight line under
+status PLACEHOLDER_PENDING_SURVEY (surfaced on the page and sidecar;
+D2 TBD closes at the survey). `maiden run --session` chains
+ingest->track(skip note)->fuse->maneuvers->approach->score->rules->
+report with the stage table; the runner drops maneuver segments
+overlapping the detected final leg (the steep twin descent otherwise
+scored as a 0-point loop — segmentation fold-back flagged for
+maiden51; roll absence on imperfect twin is maiden52's known
+twin-wobble fold-back). VT-24 rehearsal
+(results/VT-24/rehearsal/stage-table.md): two flights compute in
+2.9 s; with SD-copy estimates 5.7 s of the 600 s budget — field risk
+stays with video decode + host tracker (maiden41/42). The software
+track is feature-complete for the Prototype milestone.

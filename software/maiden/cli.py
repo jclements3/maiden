@@ -35,6 +35,10 @@ def main(argv=None):
         from maiden.convert import main as convert_main
 
         return convert_main(rest)
+    if cmd == "run":
+        from maiden.runner import main as run_main
+
+        return run_main(rest)
     print(f"maiden: unknown or not-yet-built subcommand '{cmd}'", file=sys.stderr)
     return 2
 
