@@ -46,7 +46,8 @@ def _flat_lla(origin_lla, enu):
     lat0, lon0, alt0 = origin_lla
     lat = lat0 + enu[1] / 111_320.0
     lon = lon0 + enu[0] / (111_320.0 * np.cos(np.radians(lat0)))
-    return (lat, lon, alt0 + enu[2])
+    # plain floats: repr(np.float64) is not a TMATS value (VT-14 caught this)
+    return (float(lat), float(lon), float(alt0 + enu[2]))
 
 
 def default_poses(field_yaml="config/field/rcrc.yaml"):

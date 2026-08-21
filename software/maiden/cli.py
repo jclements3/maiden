@@ -19,6 +19,10 @@ def main(argv=None):
         from maiden.twin.__main__ import main as twin_main
 
         return twin_main(rest)
+    if cmd == "ingest":
+        from maiden.ingest import main as ingest_main
+
+        return ingest_main(rest)
     print(f"maiden: unknown or not-yet-built subcommand '{cmd}'", file=sys.stderr)
     return 2
 
