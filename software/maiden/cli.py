@@ -27,6 +27,10 @@ def main(argv=None):
         from maiden.fuse import main as fuse_main
 
         return fuse_main(rest)
+    if cmd == "validate":
+        from maiden.validate import main as validate_main
+
+        return validate_main(rest)
     print(f"maiden: unknown or not-yet-built subcommand '{cmd}'", file=sys.stderr)
     return 2
 
