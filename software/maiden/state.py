@@ -11,7 +11,9 @@ SOURCES = STATIONS + ("FUSED", "TRUTH")
 class StateSample:
     t_utc:   float                 # seconds, from IRIG-B / GPS
     source:  str                   # "A" | "B" | "C" | "FUSED" | "TRUTH"
-    az_deg:  float | None = None   # station-frame azimuth (stations)
+    az_deg:  float | None = None   # station-frame azimuth (stations);
+    # convention: az clockwise from true north, el above local horizontal
+    # (pinned in lesson 09; maiden.camera and twin.sensors agree to 1e-6 deg)
     el_deg:  float | None = None
     conf:    float | None = None   # tracker confidence 0-1
     v_r:     float | None = None   # radial velocity m/s (stations)
