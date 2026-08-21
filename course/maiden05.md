@@ -11,26 +11,26 @@ attributes*, *Parser posture*) and §Build.
 
 ## Tasks
 
-- [ ] Transcribe `config/tmats/station.tmt` from D4 IF-2 exactly: `G\`
+- [x] Transcribe `config/tmats/station.tmt` from D4 IF-2 exactly: `G\`
       block, `R-1\` block with the seven TK1/DSI/CDT channel rows (plus
       TFMT/TSRC/VTF extras), all twelve `C\MAIDEN\` survey/cam/radar
       attributes, keeping the ICD's comment lines.
-- [ ] Write `software/maiden/tmats.py` from the lesson 03 skeleton:
+- [x] Write `software/maiden/tmats.py` from the lesson 03 skeleton:
       `Station` dataclass, `parse_attributes` (comment stripping, `;`
       split, first-`:` split, `__errors__` collection — never raise on
       data), `parse_station` (missing MAIDEN attribute → `None` +
       warning), `render_station` (deterministic order and float
       formatting).
-- [ ] Write `software/tests/test_tmats.py` — the four lesson-03 tests:
+- [x] Write `software/tests/test_tmats.py` — the four lesson-03 tests:
       template parses (spot values: lat 34.6851710, hdg 12.4, fx 1820.4,
       CDM324, 7 channel rows), round-trip stability, degradation on a
       deleted attribute, 200-case seeded fuzz that never raises.
-- [ ] Wire into maiden04's writer tests: real rendered template as the
+- [x] Wire into maiden04's writer tests: real rendered template as the
       TMATS payload; PyChapter10 still reads the file, body decodes as
       ASCII.
-- [ ] Decide and document the comment-preservation posture (lesson 03
+- [x] Decide and document the comment-preservation posture (lesson 03
       §Verify's diff question) in the module docstring.
-- [ ] Commit: `tmats: station template per D4 IF-2, parser/generator`.
+- [x] Commit: `tmats: station template per D4 IF-2, parser/generator`.
 
 ## Done when
 

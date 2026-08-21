@@ -11,22 +11,22 @@ writer must *enforce*, not just obey.
 
 ## Tasks
 
-- [ ] Write `software/maiden/ch10/writer.py` from the lesson 02 skeleton:
+- [x] Write `software/maiden/ch10/writer.py` from the lesson 02 skeleton:
       `Ch10Writer.write_packet` enforcing IF-1 channel/type pairs,
       TMATS-first, RTC monotonicity; filler-pad to 4-byte alignment with
       the 16-bit data checksum (work out the padding arithmetic and leave
       the comment the skeleton demands); `write_tmats` with the
       computer-generated F1 CSDW.
-- [ ] Finish `software/tests/test_ch10.py` with the three lesson-02
+- [x] Finish `software/tests/test_ch10.py` with the three lesson-02
       tests: (1) write TMATS + 2 time + 1 PCM, read back with *your*
       maiden03 reader; (2) same file through PyChapter10 — 4 packets,
       channel IDs and types match; (3) violations raise (PCM before
       TMATS, backward RTC, corrupted checksum byte).
-- [ ] `xxd file | head -2` on a generated file; narrate the header bytes
+- [x] `xxd file | head -2` on a generated file; narrate the header bytes
       aloud.
-- [ ] Explore 1: single-bit corruption script; document (docstring) which
+- [x] Explore 1: single-bit corruption script; document (docstring) which
       of your reader vs PyChapter10 is stricter and why.
-- [ ] Commit: `ch10: packet core, writer/reader for IF-1 types`.
+- [x] Commit: `ch10: packet core, writer/reader for IF-1 types`.
 
 ## Done when
 

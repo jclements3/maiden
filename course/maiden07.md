@@ -11,7 +11,7 @@ the timebase design is fresh — the document you will execute on the bench
 
 ## Tasks
 
-- [ ] Write `results/VT-02/PROCEDURE.md` specifying, per D7's VT-02 row:
+- [x] Write `results/VT-02/PROCEDURE.md` specifying, per D7's VT-02 row:
       - the stimulus: an LED driven directly by a GPS-PPS edge, positioned
         in view of all three cameras; the same PPS edge logged on the
         airborne IMU (tap or interrupt line);
@@ -22,11 +22,11 @@ the timebase design is fresh — the document you will execute on the bench
       - the pass criterion: |Δt| ≤ 5 ms across all four sources;
       - evidence: exactly what files/plots get committed under
         `results/VT-02/` for the bench run and the field run.
-- [ ] Explore 1: write the 5 ms budget table (PPS accuracy, FPGA latch
+- [x] Explore 1: write the 5 ms budget table (PPS accuracy, FPGA latch
       granularity, camera exposure midpoint vs strobe, fit residual) with
       your estimates; identify the dominant term; include the table in
       the procedure.
-- [ ] Explore 2: estimate the clap-fallback alignment error
+- [x] Explore 2: estimate the clap-fallback alignment error
       (33 ms frame quantization) and add a short "degraded sync" section
       explaining why clap-aligned sessions are flagged, not rejected.
 - [ ] Commit: `VT-02: end-to-end time alignment procedure`.

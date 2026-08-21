@@ -4,6 +4,13 @@ Version: 0.0.1
 Summary: MAIDEN: Moving Artificial Intelligence Data Evaluator Notary
 Requires-Python: >=3.11
 Requires-Dist: numpy>=1.26
+Requires-Dist: pyyaml>=6
+Requires-Dist: pychapter10>=1.1
+Requires-Dist: scipy>=1.11
+Requires-Dist: matplotlib>=3.8
+Requires-Dist: opencv-python-headless>=4.9
+Requires-Dist: pymavlink>=2.4
+Requires-Dist: reportlab>=4
 Provides-Extra: dev
 Requires-Dist: pytest>=8; extra == "dev"
 Requires-Dist: ruff>=0.4; extra == "dev"

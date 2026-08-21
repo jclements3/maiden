@@ -126,11 +126,13 @@ class TimeDecoder:
         u = np.array([p.utc for p in self.points], dtype=np.float64)
         if len(r) < 2:
             raise ValueError("need >= 2 time packets to fit")
-        self._a, self._b = np.polyfit(r - r[0], u, 1)
-        self._r0 = r[0]
+        # Fit about (r[0], u[0]): un-demeaned polyfit on epoch-scale UTC
+        # (~1.8e9 s) loses the microsecond budget to float64 conditioning.
+        self._a, self._b = np.polyfit(r - r[0], u - u[0], 1)
+        self._r0, self._u0 = r[0], u[0]
 
     def to_utc(self, rtc: int) -> float:
-        return self._a * (rtc - self._r0) + self._b
+        return self._a * (rtc - self._r0) + self._b + self._u0
 
     @property
     def drift_ppm(self) -> float:

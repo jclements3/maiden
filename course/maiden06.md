@@ -10,20 +10,20 @@ requirement*, *The timebase chain*) and §Build.
 
 ## Tasks
 
-- [ ] Write `software/maiden/timebase.py` — complete file in lesson 04
+- [x] Write `software/maiden/timebase.py` — complete file in lesson 04
       §Build: `TimePoint`, `TimeDecoder` with least-squares `fit()`,
       `to_utc()`, `drift_ppm`, `gaps()`, `healthy()`.
-- [ ] Write the file-walking function (yours): walk a `.ch10` via the
+- [x] Write the file-walking function (yours): walk a `.ch10` via the
       maiden03 reader, decode each Ch 1 payload's BCD day/h/m/s to
       seconds, return a fitted `TimeDecoder`. Handle the two traps the
       lesson names: BCD ≠ binary, and midnight rollover (unwrap +86400).
-- [ ] Write `software/tests/test_timebase.py` — the four lesson-04 cases:
+- [x] Write `software/tests/test_timebase.py` — the four lesson-04 cases:
       exact recovery (≤1 µs mid-span, drift ≈ 0), 20 ppm drift recovered
       within 0.1 ppm with ≤100 µs error over 300 s (and the
       naive-offset-would-be-6 ms comparison made executable), gap
       detection with `healthy() == False`, BCD + midnight-crossing stream
       → monotonic UTC.
-- [ ] Explore 3 (recommended): one hour-off corrupted time packet;
+- [x] Explore 3 (recommended): one hour-off corrupted time packet;
       add the fit → drop >3σ residuals → refit outlier pass with a test.
 - [ ] Commit: `timebase: RTC->UTC from Ch 1 time packets`.
 

@@ -11,19 +11,19 @@ scope out — said once, honestly*, *Tooling*).
 
 ## Tasks
 
-- [ ] `pip install pychapter10` (add to dev extras in pyproject).
-- [ ] Create `software/maiden/ch10/` with `__init__.py` and `packet.py` —
+- [x] `pip install pychapter10` (add to dev extras in pyproject).
+- [x] Create `software/maiden/ch10/` with `__init__.py` and `packet.py` —
       complete file in lesson 02 §Build: sync constant, the five data-type
       constants (0x01/0x11/0x09/0x30/0x40), the 24-byte header struct,
       `header_checksum`, `data_checksum`, `pack_rtc`.
-- [ ] Memorize-and-draw drill: sketch the 24-byte header (offset, size,
+- [x] Memorize-and-draw drill: sketch the 24-byte header (offset, size,
       field) from memory; check against lesson 02's table until you can.
-- [ ] Write `software/maiden/ch10/reader.py`: yield
+- [x] Write `software/maiden/ch10/reader.py`: yield
       `(channel, dtype, rtc, body)` tuples; validate sync, both checksums,
       nondecreasing RTC, per-channel sequence continuity, TMATS-first;
       raise `Ch10Error` carrying the file offset on any violation
       (~50 lines, yours).
-- [ ] Test the reader against hand-built byte fixtures: construct valid
+- [x] Test the reader against hand-built byte fixtures: construct valid
       packets in the test with `struct` + `packet.py` helpers (the writer
       arrives in maiden04), plus corrupted variants (bad sync, bad
       checksum, backward RTC) asserting `Ch10Error` with the right offset.
