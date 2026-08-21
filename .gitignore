@@ -20,3 +20,6 @@ firmware/**/build/
 
 # Windows ADS artifacts
 *Zone.Identifier*
+
+# setuptools build metadata
+*.egg-info/
