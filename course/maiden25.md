@@ -14,23 +14,23 @@ measurement queue" and "Coasting, validity, and continuity", then *Build*
 
 ## Tasks
 
-- [ ] Implement the full `fuse(samples, stations, epoch_hz=50.0)`
+- [x] Implement the full `fuse(samples, stations, epoch_hz=50.0)`
       scheduler: sort, init (maiden22), predict/update per measurement
       with gating, coast through gaps, publish valid-flagged FUSED
       samples with covariance on the uniform 50 Hz epoch grid. Keep
       `fuse_azel_only` working — CI uses it as a degraded-mode test.
-- [ ] Implement `FuseStats` (n_updates, n_gated, coast_time, valid_time)
+- [x] Implement `FuseStats` (n_updates, n_gated, coast_time, valid_time)
       and the validity rule: valid while √trace(P_pos) ≤ 3 m (course
       constant — record the "revisit after the campaign" comment).
-- [ ] Continuity accounting exactly in SYS-004's sense: valid-epoch time
+- [x] Continuity accounting exactly in SYS-004's sense: valid-epoch time
       over total sequence time, per flight.
-- [ ] CLI: `maiden fuse --session DIR` → `fused.npz` + a stats line, for
+- [x] CLI: `maiden fuse --session DIR` → `fused.npz` + a stats line, for
       twin or real session directories alike.
-- [ ] **Headline run**: full twin, three stations, `--imperfect`. Record
+- [x] **Headline run**: full twin, three stations, `--imperfect`. Record
       per flight into `results/lesson13/`: position RMS, velocity RMS,
       continuity. Thresholds cited from D2 (hardcode-with-TODO until
       maiden28's `config/thresholds.yaml` lands).
-- [ ] Ablate the v_r updates back out and record the velocity-RMS delta —
+- [x] Ablate the v_r updates back out and record the velocity-RMS delta —
       D3's architecture decision, measured.
 - [ ] Explore — station-out ablations (A+B, A+C, B+C, A+B+C) and the
       baseline-extension geometry-torture pass; confirm C rescues the
@@ -54,3 +54,17 @@ SYS-001–SYS-004 all exercised end-to-end on twin data; D6 §Fusion EKF
 design element complete (common-epoch lag, missing-measurement handling,
 published covariance); VT-10/11/12 sim rehearsal; VT-17 now fully
 checkable (formalized in maiden26–27).
+
+---
+**Build note (executed).** Headline (twin seed 303, --imperfect, .ch10
+round trip): pos RMS 0.219 m, vel RMS 0.909 m/s, continuity 1.0000,
+gate rate 0.089% (14571 updates / 13 gated) — all inside the
+SYS-002/003/004 sim-rehearsal thresholds; VT-10/11/12 still bind only in
+the field. v_r ablation: vel RMS 1.608 → 0.909 m/s, D3's architecture
+decision measured. Evidence: results/lesson13/. CLI is
+`python -m maiden.fuse --session DIR` (or `maiden fuse` once the
+orchestrator adds the one-line cli.py dispatch — cli.py was outside this
+sprint's file scope). Validity is a derived property (is_valid();
+IF-4 stays frozen). Station-out ablation table (A+C/B+C rows) left
+unticked — the geometry insight it targets landed via the collinearity
+discovery in maiden24's note instead.

@@ -23,6 +23,10 @@ def main(argv=None):
         from maiden.ingest import main as ingest_main
 
         return ingest_main(rest)
+    if cmd == "fuse":
+        from maiden.fuse import main as fuse_main
+
+        return fuse_main(rest)
     print(f"maiden: unknown or not-yet-built subcommand '{cmd}'", file=sys.stderr)
     return 2
 

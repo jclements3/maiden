@@ -15,24 +15,24 @@ and it is right to.
 
 ## Tasks
 
-- [ ] Derive ∂az/∂(xs,ys,zs) and ∂el/∂(xs,ys,zs) on paper; check against
+- [x] Derive ∂az/∂(xs,ys,zs) and ∂el/∂(xs,ys,zs) on paper; check against
       lesson 12's "The Jacobian, fully" section.
-- [ ] Add `azel_to_unit(az, el, pose)` and `h_azel(p, pose)` helpers
+- [x] Add `azel_to_unit(az, el, pose)` and `h_azel(p, pose)` helpers
       (in `geo.py` or a `fuse`-private module — same math, inverted).
-- [ ] Implement `EkfConfig` and the `Ekf` class in
+- [x] Implement `EkfConfig` and the `Ekf` class in
       `software/maiden/fuse.py`: `predict(t)` (CV model F, white-accel Q
       per axis), `update_azel(z, pose)` with the az innovation wrapped to
       [−π, π], `state` / `cov` properties.
-- [ ] Implement `init_two_ray(za, zb, pose_a, pose_b, t)` with the
+- [x] Implement `init_two_ray(za, zb, pose_a, pose_b, t)` with the
       closed-form closest-points solution and the 1−c² parallel-ray guard;
       seed P from σ_v = 30 m/s and the D3 σ_range ≈ R²σ_θ/B geometry.
-- [ ] Write `software/tests/test_fuse_azel.py::test_jacobian_azel`:
+- [x] Write `software/tests/test_fuse_azel.py::test_jacobian_azel`:
       analytic H vs central finite differences over random states and
       poses, 1e-6 relative agreement.
-- [ ] Write the init test: zero-noise rays recover a known point to
+- [x] Write the init test: zero-noise rays recover a known point to
       numerical precision; 0.5 mrad noise at 150 m / 75 m baseline gives
       error of order the D3 σ_range.
-- [ ] Keep every matrix explicitly shaped — no silent (6,) vs (6,1)
+- [x] Keep every matrix explicitly shaped — no silent (6,) vs (6,1)
       broadcasts.
 
 ## Done when
@@ -48,3 +48,10 @@ and it is right to.
 SYS-001, SYS-002 (sim rehearsal only — VT-10 binds in the field);
 D3 §Fusion concept; D6 §Fusion EKF (v_r, lagging, covariance publication
 deferred to maiden24–25).
+
+---
+**Build note (executed).** `software/maiden/fuse.py` Ekf core; both
+Jacobians FD-verified to 1e-6; init recovers a known point to 1e-9 m
+(zero noise) and to D3's σ_range order (0.5 mrad, 150/75 m); parallel-ray
+guard tested on the baseline extension; az-wrap trap unit-tested. Joseph
+form throughout; every matrix explicitly shaped.
