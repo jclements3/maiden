@@ -31,6 +31,10 @@ def main(argv=None):
         from maiden.validate import main as validate_main
 
         return validate_main(rest)
+    if cmd == "convert":
+        from maiden.convert import main as convert_main
+
+        return convert_main(rest)
     print(f"maiden: unknown or not-yet-built subcommand '{cmd}'", file=sys.stderr)
     return 2
 
