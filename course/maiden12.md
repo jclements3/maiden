@@ -13,24 +13,24 @@ maiden11.
 
 ## Tasks
 
-- [ ] Create `software/maiden/twin/writer.py`: per station, TMATS packet
+- [x] Create `software/maiden/twin/writer.py`: per station, TMATS packet
       first, Ch 1 time packets at 1 Hz, Ch 4 PCM (v_r) and Ch 5 messages
       (az/el/conf) interleaved by RTC, Ch 6 status at 1 Hz with PPS lock
       true. Payload structs come from `maiden/ch10/payloads.py` (created
       in maiden14 — if you get here first, define them there now and note
       it; one definition, three users).
-- [ ] Write the TRUTH file: GPS/IMU-shaped PCM channels from the truth
+- [x] Write the TRUTH file: GPS/IMU-shaped PCM channels from the truth
       arrays, same time-channel discipline.
-- [ ] Synthesize per-file RTC with per-station drift of tens of ppm — no
+- [x] Synthesize per-file RTC with per-station drift of tens of ppm — no
       shared perfect clock.
-- [ ] Add the `maiden` console-script entry point with the `twin`
+- [x] Add the `maiden` console-script entry point with the `twin`
       subcommand: `maiden twin --out DIR [--seed N] [--imperfect]`,
       writing the four `.ch10` files + `truth.npz` (arrays + events + a
       sync-event time for lesson 14's alignment tripwire).
-- [ ] Station poses for the default layout read from
+- [x] Station poses for the default layout read from
       `config/field/rcrc.yaml`: A at origin, B 75 m down the flight line,
       C at the threshold (D3 Figure 2).
-- [ ] Date TMATS from the truth epoch, not wall clock — determinism.
+- [x] Date TMATS from the truth epoch, not wall clock — determinism.
 
 ## Done when
 
@@ -46,3 +46,14 @@ maiden11.
 
 SW-004 complete · IF-1/IF-2 · VT-17 (runnable end-to-end once maiden14–15
 land ingest) · rehearses VT-01 at twin scale.
+
+---
+*Build note (execution):* payload structs were created in
+`maiden/ch10/payloads.py` here (maiden14 will import them, per the task's
+if-you-get-here-first clause). The CLI is wired as
+`python -m maiden.twin --out DIR [--seed N] [--imperfect]` (a literal
+leading `twin` token is also accepted); the `maiden` console-script alias
+needs a one-line `[project.scripts]` entry in pyproject, which this sprint
+was not permitted to edit — flagged to the orchestrator. File is
+`twin/writer.py` per this card and lesson 07 (the batch directive said
+`write.py`; the card wins).

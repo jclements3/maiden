@@ -13,21 +13,21 @@ above local horizontal) — use it here so the tracker and EKF agree later.
 
 ## Tasks
 
-- [ ] Create `software/maiden/twin/sensors.py` from the skeleton:
+- [x] Create `software/maiden/twin/sensors.py` from the skeleton:
       `observe(truth, pose, *, rng, dropout_p, outage)` yielding
       `(t, az_deg, el_deg, conf)` at 30 Hz and `(t, v_r, snr)` at 50 Hz.
-- [ ] Implement the geometry: rotate d = p − s into the station frame by
+- [x] Implement the geometry: rotate d = p − s into the station frame by
       survey heading; az/el per the pinned convention; v_r = v·û with
       positive = receding.
-- [ ] Inject the lesson's calibrated noise: σ_θ = 0.5 mrad Gaussian on
+- [x] Inject the lesson's calibrated noise: σ_θ = 0.5 mrad Gaussian on
       angles with conf ∈ [0.5, 1.0] tied to an SNR proxy; σ = 0.15 m/s on
       v_r. Keep both as named module constants with their provenance
       comments (D3 assumption; half of VT-04's criterion).
-- [ ] Add per-station Bernoulli dropouts plus the scripted multi-second
+- [x] Add per-station Bernoulli dropouts plus the scripted multi-second
       Station B sun-crossing outage.
-- [ ] Keep tracker (30 Hz) and radar (50 Hz) clocks unaligned to each
+- [x] Keep tracker (30 Hz) and radar (50 Hz) clocks unaligned to each
       other and to the 100 Hz truth — no convenient time grids.
-- [ ] pytest spot check: target dead on Station A's boresight at known
+- [x] pytest spot check: target dead on Station A's boresight at known
       range receding at 10 m/s, zero noise → az ≈ 0, el ≈ boresight,
       v_r ≈ +10.
 

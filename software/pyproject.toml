@@ -18,6 +18,9 @@ dependencies = [
     "reportlab>=4",
 ]
 
+[project.scripts]
+maiden = "maiden.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.4"]
 
