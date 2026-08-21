@@ -110,3 +110,29 @@ final sprints execute.)
 - Sprints 30–48 are the hardware track; 33–35, 37–38, 40 are desk-side
   VHDL/software you can do while waiting on solder or weather.
 - Sprints 49–57 close the pipeline; 58–67 are the campaign and demo.
+
+## Status — desk build run, 21 Aug 2026
+
+Executed autonomously against this backlog (evidence in `results/`, one
+commit per sprint batch, suite 214 tests green, `make ci` GREEN).
+
+- **Done (desk):** 01–16, 18–30 (30 = BOM only; orders are yours),
+  33–35, 37–38, 40, 49, 51–57. The desk software track is
+  feature-complete: `maiden twin | ingest | fuse | validate | run` all
+  work end to end; firmware doppler + timebase are sim-verified under
+  GHDL.
+- **Blocked on hardware/field (yours):** 17 (webcam drill), 31–32, 36,
+  39 (bench), 41–48 (bench/field), 50 (needs maiden47's real log),
+  58–67 (campaign + demo). VT-09's real pass, VT-01/02/03/04, and
+  everything with an "observe on bench" marker are waiting on parts
+  from `hardware/BOM.md`.
+- **Findings of record (all pinned as tests or doc revisions):** CIC ↓8
+  aliases at 24 GHz → D6 revised to R=4; default A-B-C collinear layout
+  makes 3-radial velocity rank-2 → survey note for maiden59; classifier
+  schedule-memorization caught by level-leg probe; FFT is 139k LUTs
+  behavioral → BRAM rewrite before PnR (BOM recommends ULX3S);
+  count-only hysteresis boundary flaw in the rules checker; lesson04
+  fit() and lesson18 IRIG-B layout errata fixed.
+- **One manual step:** `gh auth refresh -h github.com -s workflow`, then
+  `git mv ci/github-ci.yml .github/workflows/ci.yml` to activate GitHub
+  Actions (local `make ci` is the identical gate meanwhile).
