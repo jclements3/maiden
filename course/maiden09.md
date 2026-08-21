@@ -14,23 +14,23 @@ those are maiden10.
 
 ## Tasks
 
-- [ ] Create `software/maiden/twin/model.py` from the lesson skeleton:
+- [x] Create `software/maiden/twin/model.py` from the lesson skeleton:
       `DT = 0.01`, the `Truth` dataclass (t, pos_enu, vel_enu, att_rpy,
       events), and the `Imperfections` dataclass (knobs wired but may be
       inert until maiden10 uses them).
-- [ ] Implement `level_leg` (trapezoidal speed profile) and `loop`
+- [x] Implement `level_leg` (trapezoidal speed profile) and `loop`
       (vertical-plane circle; support the `ovality` knob even if unswept).
       Build each in a local frame (+x along entry heading) and
       rigid-transform into the field frame with `maiden.geo`.
-- [ ] Implement `roll` (line + roll-angle slew), `stall_turn` (up-line,
+- [x] Implement `roll` (line + roll-angle slew), `stall_turn` (up-line,
       bleed to v_min ≈ 2 m/s, turnaround arc, down-line), and `immelmann`
       (half `loop` + half `roll` — by composition, not copy-paste).
-- [ ] Derive `vel_enu` analytically per primitive (no finite differencing
+- [x] Derive `vel_enu` analytically per primitive (no finite differencing
       of your own positions), and `att_rpy` from the path frame per the
       lesson's convention.
-- [ ] Implement `concat` with seam asserts: position gap < 1 mm, speed gap
+- [x] Implement `concat` with seam asserts: position gap < 1 mm, speed gap
       < 0.1 m/s at every joint.
-- [ ] Start `software/tests/test_twin_model.py` with per-primitive checks:
+- [x] Start `software/tests/test_twin_model.py` with per-primitive checks:
       loop start/end within 2 m and coplanar path; roll holds altitude and
       heading; stall turn's speed floor lands only inside its window.
 
