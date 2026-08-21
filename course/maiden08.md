@@ -13,24 +13,24 @@ adapter contract paragraph in *Build*.
 
 ## Tasks
 
-- [ ] Create `software/maiden/state.py` from the lesson's complete listing:
+- [x] Create `software/maiden/state.py` from the lesson's complete listing:
       `StateSample`, `Event`, `SOURCES`/`STATIONS`, and `validate()`.
       Field names/types match D4 IF-4 exactly — diff against the ICD text.
-- [ ] Create `software/maiden/adapters.py`: the `@adapter(kind)` decorator
+- [x] Create `software/maiden/adapters.py`: the `@adapter(kind)` decorator
       registry and `get(kind)` with a KeyError that names known kinds.
       Document the adapter contract (path + descriptor in, nondecreasing
       `t_utc` `StateSample`s out, each passing `validate`) in the docstring.
-- [ ] Write `software/tests/test_state.py`: example-based accept/reject
+- [x] Write `software/tests/test_state.py`: example-based accept/reject
       cases for every `validate` rule (station samples with `pos_enu` →
       reject, FUSED without `pos_enu`/`vel_enu` → reject, `conf` outside
       [0,1] → reject, TRUTH with `cov` → reject, etc.).
-- [ ] Add the property-based layer: random samples with fields drawn per
+- [x] Add the property-based layer: random samples with fields drawn per
       source kind; assert `validate` accepts exactly the legal combinations
       (hypothesis or a seeded generator — your call, record it).
-- [ ] Put `check_adapter_stream` in `software/tests/conftest.py` exactly as
+- [x] Put `check_adapter_stream` in `software/tests/conftest.py` exactly as
       the lesson gives it — this is VT-14's engine, imported by the
       maiden15 and maiden50 test suites unchanged.
-- [ ] Run the lesson's Explore 3 (hostile adapter: one out-of-order sample
+- [x] Run the lesson's Explore 3 (hostile adapter: one out-of-order sample
       among 1000) and keep it as a test.
 
 ## Done when
