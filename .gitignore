@@ -10,7 +10,7 @@ __pycache__/
 
 # Raw session data stays out of git (D5 CM: raw .ch10 never modified,
 # derived products regenerable; data/ carries a README stub instead)
-data/
+/data/
 *.ch10
 
 # FPGA build outputs
