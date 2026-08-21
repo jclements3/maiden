@@ -31,7 +31,7 @@ checksum before trusting a frame; SEQ gaps are logged, never fatal.
 | 0x10 | PPS_STATUS | 1 Hz | 4 bytes, below | timebase FPGA (maiden38) |
 | 0x11 | TIME_MARK | 1 Hz (per PPS) | 10 bytes, below | timebase FPGA (maiden38) |
 | 0x12 | STROBE_STAMP | per video frame | 9 bytes, below | timebase FPGA (maiden38) |
-| 0x04 | STATION_STATUS | 1 Hz | reserved — maiden40 | recorder SBC |
+| 0x04 | STATION_STATUS | 1 Hz | 12 bytes, below | recorder SBC (maiden40) |
 
 ### 0x01 DOPPLER_V payload (9 bytes, little-endian)
 
@@ -71,3 +71,39 @@ Producer notes:
   strobe including dropped ones, so ingest can detect drops even after an
   overflow (the sticky flag says *that* stamps were lost, `seq` gaps say
   *which*).
+
+### 0x04 STATION_STATUS payload (12 bytes, little-endian)
+
+Byte-identical to the IF-1 Ch 6 payload (`maiden.ch10.payloads._STATUS`,
+`<ffBBH`) so the SBC composes it once and both the UART echo and the
+Ch 6 packet body are the same bytes:
+
+| off | field | format | notes |
+|---|---|---|---|
+| 0 | battery_v | f32 | pack bus voltage (INA219, maiden41) |
+| 4 | temp_c | f32 | SoC thermal zone |
+| 8 | pps_lock | u8 | from the latest PPS_STATUS record's locked bit |
+| 9 | disk_free_pct | u8 | statvfs on the recording volume |
+| 10 | total_drops | u16 | **recorder use of the layout's reserved pad**: saturating sum of every ring's drop counter (lesson 19 never-drop discipline). `payloads.unpack_status` currently ignores these two bytes; surfacing them in ingest is a one-line payloads/ingest change flagged for D4 IF-1 fold-back (lesson 19 Explore 4). |
+
+## Recorder-side notes (maiden40)
+
+- **Ch 4 / Ch 5 / Ch 6 packet bodies** are the `maiden.ch10.payloads`
+  structs — that module is the single owner of IF-1 payload layouts; this
+  file only owns the UART wire framing and the mapping between the two.
+- **RTC assignment:** TIME_MARK and STROBE_STAMP carry their own RTC.
+  DOPPLER_V does not; the recorder extrapolates from the latest TIME_MARK
+  via the local monotonic clock (~1-2 ms worst-case serial+scheduling
+  skew, inside the radar's 20 ms frame cadence). Candidate maiden41
+  improvement: carry a truncated RTC in the DOPPLER_V record and close
+  the gap at the source — fold into D4 IF-1 when decided.
+- **Records before the first TIME_MARK** are counted and dropped
+  (`FpgaSource.pre_time_drops`): un-timestampable data is degraded data
+  that says so, per the never-drop discipline's reporting rule.
+- **Late items** (RTC below the last written packet) are clamped forward
+  by the writer and counted (`late_clamped`); payload timestamps remain
+  the truth. The ICD's nondecreasing-RTC rule is never violated.
+- **Torn files** (dead battery, `kill -9`): `maiden.ingest`'s walker
+  already tolerates a truncated tail — complete packets parse, the torn
+  one is dropped. That IS the salvage policy (lesson 19 Explore 3);
+  recorder-side fsync every 8 MB bounds the loss window.

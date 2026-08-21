@@ -60,7 +60,7 @@ continuity, strobe FIFO + sticky overflow all pass (15/15 SYS-006 cases).
 Two findings: (1) lesson 18 erratum — its frame sketch puts SBS contiguous
 at cells 80–97 with P9 at 99, contradicting its own "P on every 10th
 cell"; implemented the real RCC layout (P9 at 89, SBS split 80–88/90–97,
-P0 at 99), noted in irigb_gen.vhd's header. (2) The PROTOCOL.md task is
+P0 at 99), noted in irigb_gen.vhd's header. (2) [resolved] The PROTOCOL.md merge is done — types 0x10-0x12 live in firmware/recorder/PROTOCOL.md (RECORDS.md retired). Original note: the PROTOCOL.md task is
 NOT ticked: maiden35 ran concurrently and owns that file's creation, so
 the timebase record types are documented in firmware/timebase/RECORDS.md
 pending a one-commit merge into PROTOCOL.md.
