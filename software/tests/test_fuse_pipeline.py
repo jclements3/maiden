@@ -33,11 +33,17 @@ from maiden.twin.writer import default_poses, write_session
 RESULTS12 = Path("results/lesson12")
 RESULTS13 = Path("results/lesson13")
 
-# SYS-002/003/004 sim-rehearsal thresholds, cited from D2.
-# TODO(maiden28): read from config/thresholds.yaml once it exists.
-POS_RMS_MAX = 1.0     # m   (SYS-002)
-VEL_RMS_MAX = 1.0     # m/s (SYS-003)
-CONTINUITY_MIN = 0.95  # (SYS-004)
+# SYS-002/003/004 sim-rehearsal thresholds from their single numeric
+# home (maiden28); D2 is the authority for the values.
+from maiden.validate import (
+    CONTINUITY_MIN,
+)
+from maiden.validate import (
+    POS_RMS_MAX_M as POS_RMS_MAX,
+)
+from maiden.validate import (
+    VEL_RMS_MAX_MPS as VEL_RMS_MAX,
+)
 
 
 def _streams_to_samples(streams_by_name):

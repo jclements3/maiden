@@ -15,29 +15,29 @@ and "The HIL half, designed before it exists", then *Build*.
 
 ## Tasks
 
-- [ ] `config/thresholds.yaml`: the single numeric home for
+- [x] `config/thresholds.yaml`: the single numeric home for
       SYS-002/003/004 values, each line carrying its requirement ID and
       the comment that D2 is the authority (a change here without a
       matching D2 revision is a D5 change-control violation).
-- [ ] Refactor maiden25's hardcode-with-TODO and maiden27's gate to read
+- [x] Refactor maiden25's hardcode-with-TODO and maiden27's gate to read
       the thresholds file.
-- [ ] `scripts/replay.py`: generate-or-load the canonical twin set
+- [x] `scripts/replay.py`: generate-or-load the canonical twin set
       (seeds 1001–1003, `--imperfect`), run ingest → fuse → validate per
       session, apply the gate, exit nonzero on any breach; then the HIL
       block — structural checks on `data/hil/` or a **visible** skip
       notice while it's absent.
-- [ ] `.github/workflows/ci.yml` per the lesson skeleton: test job
+- [x] `.github/workflows/ci.yml` per the lesson skeleton: test job
       (ruff + pytest) and replay job, cache keyed on
       `hashFiles('software/maiden/twin/**')` + seeds — source hash, not
       seed-only; a stale-twin cache tests the wrong thing.
-- [ ] Split fast vs full: the merge-gating job replays the twin's Ch 5
+- [x] Split fast vs full: the merge-gating job replays the twin's Ch 5
       message-level az/el through fusion; the render-heavy video path
       runs on a nightly schedule. Document the split in the workflow
       file.
-- [ ] `Makefile`: `make lint test replay ci` — same scripts CI runs.
-- [ ] Lay the `v0.1-basic-plan` tag on the initial-docs commit if maiden01
+- [x] `Makefile`: `make lint test replay ci` — same scripts CI runs.
+- [ ] Lay the `v0.1-basic-plan` tag (orchestrator: state-changing git) on the initial-docs commit if maiden01
       didn't.
-- [ ] Prove regeneration: delete `data/twin-ci`, run `make ci` from a
+- [x] Prove regeneration: delete `data/twin-ci`, run `make ci` from a
       clean clone, watch the set rebuild.
 
 ## Done when
@@ -58,3 +58,24 @@ SW-005 implemented for the twin set (HIL interface designed, dataset TBD
 → maiden45); D5 §How the hardware and software tracks merge, §CM (tags,
 one-repo layout, requirement-change-is-one-commit). The alarm test —
 VT-18 — is maiden29.
+
+---
+
+**Execution notes (maiden28, desk).** thresholds.yaml is the single home
+(validate.py + test_fuse_pipeline.py read it; fuse.py docstring updated);
+replay.py generates/caches seeds 1001-1003 keyed on twin source hash with
+MANIFEST.json re-verification, prints signed percent margins per SYS
+threshold (thin-margin note < 5%), and skips HIL loudly. `make ci` =
+lint+test+replay, identical to the workflow. Real first run: all seeds
+PASS (pos ~0.22-0.24 m, vel 0.909-0.952 m/s, continuity 1.0); corrupt-
+threshold check went red and was restored byte-identically; regeneration
+proven from a deleted cache. NOT done here: the v0.1-basic-plan tag and
+the on-GitHub green run (state-changing git is the orchestrator's; tag +
+push noted for it). GHDL firmware sims documented as dev-machine/nightly
+work, not merge-gating.
+
+**Orchestrator note (push-scope workaround).** The push credential lacks
+GitHub's `workflow` scope, so `ci/github-ci.yml` is parked outside
+`.github/workflows/`. To activate Actions: `gh auth refresh -h github.com
+-s workflow`, then `git mv ci/github-ci.yml .github/workflows/ci.yml`,
+commit, push. `make ci` runs the identical gate locally meanwhile.

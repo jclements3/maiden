@@ -12,24 +12,24 @@ and the *Verify* section's drill notes.
 
 ## Tasks
 
-- [ ] Branch (e.g., `vt18-drill`), inject one subtle, plausible fusion
+- [x] Branch (e.g., `vt18-drill`), inject one subtle, plausible fusion
       bug: transpose a Jacobian block, drop the v_r update, or
       off-by-one the epoch grid. It must degrade accuracy, not crash the
       pipeline — a crash-red run doesn't test the *accuracy* gate; pick a
       subtler bug if yours dies loudly.
 - [ ] Push; watch the replay job go red on a SYS-002/003/004 threshold
       breach.
-- [ ] Capture the evidence into `results/VT-18/`: which bug was
+- [x] Capture the evidence into `results/VT-18/`: which bug was
       injected, the red run's log excerpt (or screenshot), and which
       threshold caught it.
-- [ ] Delete the drill branch.
-- [ ] Note in `results/VT-18/` the standing rule: repeat this drill after
+- [ ] Delete the drill branch. (No branch created — drill ran locally via `make ci`; see notes.)
+- [x] Note in `results/VT-18/` the standing rule: repeat this drill after
       any major CI change.
 - [ ] Explore — cache poisoning: weaken the cache key to seed-only,
       change the twin's noise model, observe CI wrongly pass, restore
       the source-hash key. Now you've *seen* why maiden28 keyed it that
       way.
-- [ ] Explore — extend `replay.py` to print percent margin to each
+- [x] Explore — extend `replay.py` to print percent margin to each
       threshold, not just pass/fail; a 2%-margin pass deserves different
       attention than a 60% one.
 
@@ -47,3 +47,17 @@ VT-18 (D7: inspection — "inject a fusion bug on a branch; build fails on
 SYS-002/003/004 thresholds") executed with evidence filed; SW-005's
 regression gate demonstrated live, closing the desk software track —
 maiden30 opens the hardware track.
+
+---
+
+**Execution notes (maiden29, desk).** Drill performed locally with
+`make ci`'s replay as the gate (no branch push — state-changing git is
+the orchestrator's; the on-GitHub red run should be repeated once after
+the workflow's first push, per the standing rule). Injected bug: v_r
+update silently dropped in the epoch scheduler — accuracy-red (SYS-003
+BREACH on all 3 seeds, 1.76-2.24 m/s vs 1.0; pipeline never crashed;
+SYS-002/004 stayed green). fuse.py restored byte-identically (diff-
+verified), green rerun confirmed. Evidence: results/VT-18/drill.md.
+Margin report built into replay.py (visible in CI logs). Cache-poisoning
+Explore skipped for time — the source-hash key's rationale is recorded
+in replay.py and ci.yml comments.

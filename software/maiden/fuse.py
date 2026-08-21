@@ -15,8 +15,8 @@ valid while sqrt(trace(P_pos)) <= VALID_POS_M. VALID_POS_M = 3.0 m is a
 course constant (~3x SYS-002) — revisit after the validation campaign.
 IF-4 stays frozen; use is_valid(sample).
 
-Thresholds cited from D2 (SYS-002/003/004) are NOT restated here.
-TODO(maiden28): read them from config/thresholds.yaml once it exists.
+Thresholds cited from D2 (SYS-002/003/004) are NOT restated here —
+they live in config/thresholds.yaml (maiden28); validate.py reads it.
 """
 
 from collections.abc import Iterable

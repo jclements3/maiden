@@ -20,7 +20,7 @@ Design decisions (lesson 14):
 - Attitude residuals are emitted as ABSENT (None), not zero — the fused
   track does not estimate attitude yet (D8: "where estimable").
 - Pass thresholds are SYS-002/003/004's numbers, held in module
-  constants until maiden28 moves them to config/thresholds.yaml (TODO).
+  config/thresholds.yaml (maiden28) — D2 remains the authority.
 """
 
 from __future__ import annotations
@@ -35,11 +35,25 @@ from maiden.geo import enu_from_lla
 from maiden.twin.sensors import azel_from_pos
 
 # SYS-002 / SYS-003 / SYS-004 pass criteria (VT-10/11/12 field tests;
-# exercised in sim as rehearsal). TODO(maiden28): config/thresholds.yaml.
-POS_RMS_MAX_M = 1.0
-VEL_RMS_MAX_MPS = 1.0
-CONTINUITY_MIN = 0.95
-SYNC_BUDGET_S = 0.005  # SYS-006
+# exercised in sim as rehearsal). Single numeric home (maiden28):
+# config/thresholds.yaml — D2 is the authority for the values.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+THRESHOLDS_FILE = _REPO_ROOT / "config" / "thresholds.yaml"
+
+
+def load_thresholds(path=THRESHOLDS_FILE) -> dict:
+    """The SYS numbers, from their one code-readable home."""
+    import yaml
+
+    with open(path) as f:
+        return yaml.safe_load(f)
+
+
+_T = load_thresholds()
+POS_RMS_MAX_M = float(_T["SYS-002"]["pos_rms_m"])
+VEL_RMS_MAX_MPS = float(_T["SYS-003"]["vel_rms_mps"])
+CONTINUITY_MIN = float(_T["SYS-004"]["continuity"])
+SYNC_BUDGET_S = float(_T["SYS-006"]["sync_budget_s"])
 
 
 # --------------------------------------------------------------- tracks
