@@ -1,0 +1,39 @@
+# RCRC site geometry (D1 operating site; survey values per D4 IF-2 example).
+# Phase 0 survey supersedes these numbers; update this file + station TMATS
+# together, never one without the other.
+site:
+  name: RCRC
+  address: 4100 Leeman Ferry Rd
+  approx_lla: [34.685, -86.592]
+
+field_origin:            # Station A survey mark = field-frame origin
+  lla: [34.6851710, -86.5922440, 183.2]
+
+stations:
+  A:
+    lla: [34.6851710, -86.5922440, 183.2]
+    heading_deg: 12.4
+    boresight_el_deg: 8.0
+  B:                     # ~75 m along the flight line; placeholder until survey
+    lla: null
+    heading_deg: null
+  C:                     # near active threshold; placeholder until survey
+    lla: null
+    heading_deg: null
+
+pattern_box:
+  center_range_m: 150
+  half_angle_deg: 60
+
+# SYS-010 TBD lands here after the Phase 0 survey (lesson 24 consumes it).
+# Planned schema — polygons are closed rings of field-frame ENU [E, N]
+# pairs (meters), digitized from surveyed corner points:
+#
+# no_fly_polygons:
+#   - name: pits_and_spectators
+#     kind: no_overflight        # no_overflight | flight_line
+#     vertices_enu:              # [[E, N], ...] closed ring, CCW
+#       - [0.0, 0.0]
+# flight_line:                   # a polyline, crossing it = Event
+#   vertices_enu:
+#     - [0.0, 0.0]
