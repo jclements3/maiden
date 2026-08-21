@@ -24,11 +24,23 @@ from maiden.ch10 import payloads as pl
 from maiden.state import StateSample, validate
 
 
+def _station_azel(model: CameraModel, pose, u, v):
+    """px -> STATION-FRAME az/el — the ecosystem contract for station
+    samples (twin.writer writes station-frame, ingest decodes verbatim,
+    fuse.azel_to_unit adds the heading back).  px_to_azel returns TRUE
+    az; forgetting the heading subtraction biased every emitted sample
+    by the survey heading (12.4 deg on Station A's template) — caught by
+    test_emit_station_frame.py."""
+    az_true, el = px_to_azel(model, pose, u, v)
+    az = (az_true - pose.heading_deg + 180.0) % 360.0 - 180.0
+    return az, el
+
+
 def to_state_samples(track_outs, t_utc: float, model: CameraModel, pose,
                      station_id: str) -> list[StateSample]:
     out = []
     for tr in track_outs:
-        az, el = px_to_azel(model, pose, tr.u, tr.v)
+        az, el = _station_azel(model, pose, tr.u, tr.v)
         s = StateSample(t_utc=t_utc, source=station_id,
                         az_deg=float(az), el_deg=float(el),
                         conf=float(np.clip(tr.conf, 0.0, 1.0)))
@@ -41,7 +53,7 @@ def to_ch5_bodies(track_outs, model: CameraModel, pose) -> list[bytes]:
     """The same numbers, packed for the recorder's Ch 5 (IF-1)."""
     bodies = []
     for tr in track_outs:
-        az, el = px_to_azel(model, pose, tr.u, tr.v)
+        az, el = _station_azel(model, pose, tr.u, tr.v)
         x, y, w, h = (int(b) for b in tr.bbox)
         bodies.append(pl.pack_tracker(
             float(az), float(el), float(np.clip(tr.conf, 0.0, 1.0)),

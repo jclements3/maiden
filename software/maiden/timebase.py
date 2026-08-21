@@ -99,10 +99,13 @@ class TimeDecoder:
 # --- Time F1 payload: BCD day/h/m/s ---------------------------------------
 #
 # Layout used by MAIDEN's Ch 1 payload after the 4-byte CSDW, RCC 106
-# Time F1 "day" format, three little-endian 16-bit words:
+# Time F1 "day" format, three little-endian 16-bit words, nibble-aligned
+# per the standard (every BCD digit gets a full 4 bits — the previous
+# packed layout gave Hmn only 3 bits, so hundreds-of-ms digits 8-9
+# overflowed into the seconds field; found by adversarial review):
 #
-#   word 0:  [15:14]=0  [13:11]=TSn (tens of s)  [10:7]=Sn (units s)
-#            [6:4]=Hmn (hundreds of ms)          [3:0]=Tmn (tens of ms)
+#   word 0:  [15]=0     [14:12]=TSn (tens of s)  [11:8]=Sn (units s)
+#            [7:4]=Hmn (hundreds of ms)          [3:0]=Tmn (tens of ms)
 #   word 1:  [15:14]=0  [13:12]=THn (tens of hr) [11:8]=Hn (units hr)
 #            [7]=0      [6:4]=TMn (tens of min)  [3:0]=Mn (units min)
 #   word 2:  [15:12]=0  [11:8]=HDn (hundreds of day)
@@ -121,7 +124,7 @@ def _bcd_digit(x: int) -> int:
 def encode_time_payload(day: int, h: int, m: int, s: int,
                         ms: int = 0) -> bytes:
     """Pack day-of-year + h/m/s(/ms) into the 3-word BCD payload (+CSDW)."""
-    w0 = (_bcd_digit(s // 10) << 11 | _bcd_digit(s % 10) << 7
+    w0 = (_bcd_digit(s // 10) << 12 | _bcd_digit(s % 10) << 8
           | _bcd_digit(ms // 100) << 4 | _bcd_digit((ms // 10) % 10))
     w1 = (_bcd_digit(h // 10) << 12 | _bcd_digit(h % 10) << 8
           | _bcd_digit(m // 10) << 4 | _bcd_digit(m % 10))
@@ -140,8 +143,8 @@ def decode_time_payload(payload: bytes) -> tuple[int, float]:
         raise ValueError(f"time payload too short: {len(payload)} bytes")
     w0, w1, w2 = (int.from_bytes(payload[4 + 2 * i:6 + 2 * i], "little")
                   for i in range(3))
-    s = ((w0 >> 11) & 0x7) * 10 + ((w0 >> 7) & 0xF)
-    ms = ((w0 >> 4) & 0x7) * 100 + (w0 & 0xF) * 10
+    s = ((w0 >> 12) & 0x7) * 10 + ((w0 >> 8) & 0xF)
+    ms = ((w0 >> 4) & 0xF) * 100 + (w0 & 0xF) * 10
     h = ((w1 >> 12) & 0x3) * 10 + ((w1 >> 8) & 0xF)
     m = ((w1 >> 4) & 0x7) * 10 + (w1 & 0xF)
     day = ((w2 >> 8) & 0xF) * 100 + ((w2 >> 4) & 0xF) * 10 + (w2 & 0xF)
@@ -162,9 +165,19 @@ def decoder_from_packets(packets, **kw) -> TimeDecoder:
     for rtc, payload in packets:
         day, sod = decode_time_payload(payload)
         utc = day * 86_400.0 + sod + offset
-        if prev is not None and utc < prev:
-            offset += 86_400.0
-            utc += 86_400.0
+        # Half-day thresholds, both directions: a source whose day field
+        # does not increment at midnight wraps backwards by ~a day (add
+        # 86 400); when its day field then catches up one packet late,
+        # the same stream jumps forwards by ~a day (remove the offset
+        # again). A plain "utc < prev" check left the offset sticky and
+        # injected a permanent +86 400 — found by adversarial review.
+        if prev is not None:
+            if utc < prev - 43_200.0:
+                offset += 86_400.0
+                utc += 86_400.0
+            elif utc > prev + 43_200.0 and offset >= 86_400.0:
+                offset -= 86_400.0
+                utc -= 86_400.0
         prev = utc
         dec.add(TimePoint(rtc=rtc, utc=utc))
     dec.fit()

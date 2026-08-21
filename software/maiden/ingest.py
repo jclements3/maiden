@@ -97,13 +97,15 @@ def walk_packets(path):
             hdr = f.read(_CHUNK)
             if len(hdr) < _CHUNK:
                 return                      # truncated tail: clean end
-            (sync, channel, packet_len, data_len, _ver, _seq, _flags,
+            (sync, channel, packet_len, data_len, _ver, _seq, flags,
              dtype, rtc6, hcs) = _HDR.unpack(hdr)
             if sync != _SYNC:
                 raise IngestError(f"bad sync 0x{sync:04x} at offset {off}")
             if pk.header_checksum(hdr[:22]) != hcs:
                 raise IngestError(f"header checksum mismatch at offset {off}")
-            if packet_len < _CHUNK or data_len > packet_len - _CHUNK:
+            trailer = 2 if flags & 0x03 == 0x02 else 0
+            if (packet_len < _CHUNK + trailer
+                    or data_len > packet_len - _CHUNK - trailer):
                 raise IngestError(f"nonsense lengths at offset {off}")
             rest = f.read(packet_len - _CHUNK)
             if len(rest) < packet_len - _CHUNK:

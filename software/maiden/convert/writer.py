@@ -28,6 +28,7 @@ default) and is recorded in TMATS as C\\MAIDEN\\CONVERT\\ORIGIN_LLA.
 """
 
 import struct
+import time
 from dataclasses import dataclass
 
 import numpy as np
@@ -102,11 +103,15 @@ def write_aircraft_ch10(rec, airframe: Airframe, out_path, origin_lla):
                                else rec.gps_t[0])))
     t_last = int(np.ceil(rec.gps_t[-1]))
     for s in range(t_first, t_last + 1):
-        day = int((s % 31_536_000) // 86_400) + 1     # day-of-year, 1-based
-        sod = s % 86_400
-        h, mm, ss = sod // 3600, (sod % 3600) // 60, sod % 60
+        # True UTC day-of-year: the naive (s % 365-day-year) formula was
+        # off by the accumulated leap days (14 by 2026), which would
+        # misalign airborne vs station absolute time by days and defeat
+        # SYS-006's no-manual-offset requirement. Found by adversarial
+        # review; stations carry true DOY from IRIG-B, so must we.
+        g = time.gmtime(s)
         pkts.append((rtc_of(float(s)), 1, 0x11,
-                     encode_time_payload(day, h, mm, ss)))
+                     encode_time_payload(g.tm_yday, g.tm_hour, g.tm_min,
+                                         g.tm_sec)))
     # Ch 3 GNSS (ENU) + Ch 5 GPS_LLA (raw provenance), per GPS fix
     for i in range(len(rec.gps_t)):
         lla = (float(rec.lat[i]), float(rec.lon[i]), float(rec.alt[i]))

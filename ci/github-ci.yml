@@ -46,7 +46,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: data/twin-ci
-          key: twin-ci-${{ hashFiles('software/maiden/twin/**') }}-1001-1003
+          key: twin-ci-${{ hashFiles('software/maiden/twin/**', 'software/maiden/ch10/**', 'software/maiden/timebase.py', 'software/maiden/tmats.py', 'software/maiden/geo.py') }}-1001-1003
       - run: .venv/bin/python scripts/replay.py
 
   nightly-video:

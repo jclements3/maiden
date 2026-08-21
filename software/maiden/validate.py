@@ -233,7 +233,10 @@ def residuals(fused: Track, truth: Track) -> Residuals:
     Only validity-flagged epochs enter; ends are trimmed to overlap —
     no extrapolation.
     """
-    ok = np.ones(len(fused.t), bool) if fused.valid is None else fused.valid
+    # copy: `&=` on the caller's own valid array would silently corrupt
+    # the Track for any later use (review finding, pinned regression)
+    ok = (np.ones(len(fused.t), bool) if fused.valid is None
+          else fused.valid.copy())
     ok &= (fused.t >= truth.t[0]) & (fused.t <= truth.t[-1])
     te = fused.t[ok]
     tp = np.column_stack([np.interp(te, truth.t, truth.pos[:, i])
@@ -270,6 +273,13 @@ class SegmentTable:
 
 
 def _metrics(r_pos, r_vel):
+    if len(r_pos) == 0:
+        # an all-gated / no-overlap session must FAIL, not crash:
+        # nan metrics make flight_passes() False and render as 'nan'
+        nan3 = [float("nan")] * 3
+        return {"pos_rms": float("nan"), "pos_p95": float("nan"),
+                "vel_rms": float("nan"),
+                "per_axis": {"pos_rms_enu": nan3, "vel_rms_enu": nan3}}
     n_pos = np.linalg.norm(r_pos, axis=1)
     n_vel = np.linalg.norm(r_vel, axis=1)
     return {
@@ -346,6 +356,10 @@ def bands(all_res: list[Residuals]) -> dict:
     """
     p = np.concatenate([np.linalg.norm(r.r_pos, axis=1) for r in all_res])
     s = np.concatenate([np.linalg.norm(r.r_vel, axis=1) for r in all_res])
+    if len(p) == 0:  # same guard as _metrics: fail loudly downstream, not here
+        return {"position_p95_m": float("nan"), "speed_p95_mps": float("nan"),
+                "n_samples": 0,
+                "provenance": "EMPTY residual set — session unusable"}
     return {
         "position_p95_m": float(np.percentile(p, 95)),
         "speed_p95_mps": float(np.percentile(s, 95)),

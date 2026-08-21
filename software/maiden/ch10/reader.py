@@ -46,6 +46,15 @@ def read_packets(path):
             raise Ch10Error(f"bad sync 0x{sync:04x}", off)
         if pk.header_checksum(data[off:off + 22]) != hcs:
             raise Ch10Error("header checksum mismatch", off)
+        # Length sanity BEFORE trusting either field: packet_len < 24
+        # would stall the walk (packet_len == 0 loops forever), and a
+        # data_len reaching past the payload region would serve the
+        # trailer/next packet's bytes as body.
+        trailer = 2 if flags & 0x03 == 0x02 else 0
+        if packet_len < 24 + trailer or data_len > packet_len - 24 - trailer:
+            raise Ch10Error(
+                f"nonsense lengths: packet_len={packet_len} "
+                f"data_len={data_len}", off)
         if off + packet_len > len(data):
             raise Ch10Error("truncated packet body", off)
         rtc = int.from_bytes(rtc6, "little")

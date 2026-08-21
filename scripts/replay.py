@@ -32,8 +32,18 @@ CACHE = REPO / "data" / "twin-ci"
 
 
 def twin_source_hash() -> str:
+    # The cached .ch10 bytes depend on more than twin/**: the packet
+    # writer, TMATS renderer, time-payload encoding, and geo all shape
+    # the files. Hashing only twin/** let an encoding change (e.g. the
+    # BCD layout fix) poison the cache silently — found by adversarial
+    # review. Hash every module that touches the written bytes.
     h = hashlib.sha256()
-    for p in sorted((REPO / "software/maiden/twin").rglob("*.py")):
+    roots = [REPO / "software/maiden/twin", REPO / "software/maiden/ch10"]
+    singles = [REPO / "software/maiden/timebase.py",
+               REPO / "software/maiden/tmats.py",
+               REPO / "software/maiden/geo.py"]
+    files = sorted(p for r in roots for p in r.rglob("*.py")) + singles
+    for p in files:
         h.update(p.name.encode())
         h.update(p.read_bytes())
     return h.hexdigest()[:16]
