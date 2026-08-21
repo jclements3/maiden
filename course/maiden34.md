@@ -12,24 +12,24 @@ Suite, `fpga` alias).
 
 ## Tasks
 
-- [ ] `firmware/doppler/golden/model.py`: synthesize I/Q for a commanded
+- [x] `firmware/doppler/golden/model.py`: synthesize I/Q for a commanded
       v_r + noise at commanded SNR; float CIC → FFT → CFAR reference;
       emit (a) stimulus as signed 16-bit text files, (b) expected
       v_r/SNR/bin per 20 ms epoch. Fixed seed; importable from
       `software/tests/` so CI (maiden28) can regenerate stimulus
       deterministically.
-- [ ] Derive and write down the internal width: N·log2(R·M) growth over
+- [x] Derive and write down the internal width: N·log2(R·M) growth over
       16-bit input (N = 3: 22 bits at R = 4, 25 at R = 8); put the chosen
       numbers and the output truncation statement in the entity header
       comment — the fixed-point-formats-written-down habit.
-- [ ] Implement `cic_dec.vhd` to the lesson's pinned entity (generics
+- [x] Implement `cic_dec.vhd` to the lesson's pinned entity (generics
       N/R/W_IN; ports clk, rst, in_i/q, in_stb, out_i/q, out_stb),
       house style: numeric_std only, sync active-high reset, registered
       outputs, one entity per file.
-- [ ] Testbench: golden sine in, compare against model output within
+- [x] Testbench: golden sine in, compare against model output within
       ±2 LSB, asserts tagged `GS-002`; Makefile per the theremin phase1
       pattern (`sim`, `wave` targets).
-- [ ] Lesson 17 Explore 1 while you're here: run the golden model with
+- [x] Lesson 17 Explore 1 while you're here: run the golden model with
       R = 8 and 24 GHz constants at 30 m/s, capture the fold plot, and
       link it into `docs/notes/decimation-audit.md` (closes maiden33's
       TODO).
@@ -46,3 +46,14 @@ Suite, `fpga` alias).
 
 GS-002, D6 §FPGA DSP (as revised by maiden33), SW-005 (golden stimulus
 feeds the CI replay), theremin-roadmap fixed-point discipline.
+
+## Completion notes (executed 2026-08-21)
+
+- Golden model at `firmware/doppler/golden/model.py` — bit-true integer
+  mirror of the RTL, fixed seed 20260821, regeneration byte-identical.
+- `make sim TB=cic_dec_tb`: GS-002 pass, 1024 outputs, worst delta
+  **0 LSB** (tol 2) — bit-true by construction.
+- Widths in the entity header: R=4 → 22-bit internal, R=8 → 25-bit;
+  truncating unity-DC-gain output stated.
+- Alias fold exhibit: `results/design-notes/alias-fold.png`, linked from
+  the audit note (closes maiden33's TODO).
