@@ -88,7 +88,8 @@ directory that already contains `docs/` and `course/`).
 **Initialize and lay out:**
 
 ```bash
-git init
+git init   # no-op if the repo already exists (it does if the course
+           # itself arrived by commit); harmless either way
 mkdir -p software/maiden software/tests firmware hardware \
          config/tmats config/field data results
 touch software/maiden/__init__.py

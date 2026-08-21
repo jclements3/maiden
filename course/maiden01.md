@@ -11,7 +11,8 @@ part of the design* and *The document set, in reading order*.
 
 ## Tasks
 
-- [ ] `git init` in `/home/clementsj/projects/maiden`; create
+- [ ] `git init` in `/home/clementsj/projects/maiden` (skip if the repo
+      already exists — it does if the course itself was committed); create
       `software/maiden`, `software/tests`, `firmware/`, `hardware/`,
       `config/tmats`, `config/field`, `data/`, `results/` per lesson 00
       §Build.
