@@ -65,6 +65,8 @@ If the judges agree at r = 0.85, then VT-21's r ≥ 0.8 means "MAIDEN is
 nearly as consistent with a judge as judges are with each other," which is
 the honest claim the demo should make.
 
+Judge-sheet capture format: `config/judge_sheets/README.md` (maiden54).
+
 ## Doc Trace
 
 - **Governs this lesson:** D7 §Validation campaign, §Verification against

@@ -5,6 +5,8 @@ compute the VT-21 correlation with the judge-to-judge ceiling beside it,
 and train the sprint-54 calibration layer on a fit subset with honest
 held-out reporting.
 
+**Data contract.** Judge sheets follow `config/judge_sheets/README.md` (one row per maneuver per judge per flight; contract defined in maiden54).
+
 **Depends on.** maiden63 (six Sportsman flights recorded), maiden54
 (untrained isotonic calibration layer), maiden57 (MAIDEN scores per
 flight). Gates: two club Pattern judges recruited; signed consent from
