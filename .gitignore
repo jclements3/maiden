@@ -25,7 +25,7 @@ firmware/**/build/
 *.egg-info/
 
 # Internal IRAD / business material - never commit (repo is public)
-IRAD*
+*IRAD*
 HANDOFF.md
 tabletop-range-BOM-plan.md
 *.pptx
