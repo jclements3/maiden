@@ -23,3 +23,11 @@ firmware/**/build/
 
 # setuptools build metadata
 *.egg-info/
+
+# Internal IRAD / business material - never commit (repo is public)
+IRAD*
+HANDOFF.md
+tabletop-range-BOM-plan.md
+*.pptx
+*.xlsx
+figures/irad/
