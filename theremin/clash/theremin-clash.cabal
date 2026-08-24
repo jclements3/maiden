@@ -1,0 +1,62 @@
+cabal-version:      2.4
+name:               theremin-clash
+version:            0.1.0.0
+synopsis:           Clash port of the fpga-theremin DSP blocks (MAIDEN evaluation spike)
+build-type:         Simple
+
+common clash-opts
+    default-language: Haskell2010
+    default-extensions:
+        BangPatterns
+        BinaryLiterals
+        DataKinds
+        DeriveAnyClass
+        DeriveGeneric
+        DerivingStrategies
+        FlexibleContexts
+        MagicHash
+        NoImplicitPrelude
+        NoStarIsType
+        RecordWildCards
+        ScopedTypeVariables
+        TypeApplications
+        TypeFamilies
+        TypeOperators
+    ghc-options:
+        -Wall -Wcompat
+        -haddock
+        -fexpose-all-unfoldings
+        -fno-worker-wrapper
+        -fplugin GHC.TypeLits.Extra.Solver
+        -fplugin GHC.TypeLits.Normalise
+        -fplugin GHC.TypeLits.KnownNat.Solver
+    build-depends:
+        base                      >=4.17 && <4.19,
+        clash-prelude             ==1.8.5,
+        ghc-typelits-natnormalise,
+        ghc-typelits-extra,
+        ghc-typelits-knownnat
+
+library
+    import:           clash-opts
+    hs-source-dirs:   src
+    exposed-modules:
+        Theremin.DelayDiffFilter
+        Theremin.EdgeToPulsePosition
+        Theremin.IirNStage
+        Theremin.Pwm
+        Theremin.SensorPeriodMeasure
+
+test-suite spec
+    import:           clash-opts
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    other-modules:    IirSpec
+                      SensorSpec
+    build-depends:
+        theremin-clash,
+        tasty,
+        tasty-hunit,
+        tasty-hedgehog,
+        hedgehog
