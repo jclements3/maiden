@@ -26,6 +26,8 @@ firmware/**/build/
 
 # Internal IRAD / business material - never commit (repo is public)
 *IRAD*
+LEDGER.md
+receipts/
 HANDOFF.md
 tabletop-range-BOM-plan.md
 *.pptx
