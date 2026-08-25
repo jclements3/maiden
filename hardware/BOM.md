@@ -78,22 +78,27 @@ sizing question is architectural, not a choice of part.*
    filter stages out of one adder by time-multiplexing: **175 LUT4 / 67 FF /
    0 BRAM / 132 MHz** measured on the same part, versus five parallel copies.
 
-**Caveats on the FFT number — it settles capacity, not correctness.**
+**Update, 25 Aug 2026 — both caveats on the FFT number are now retired.**
+The initial sizing model failed timing (25.5 MHz) and was unverified. It has
+since been debugged (four real defects: reversed stage order, delay-line
+off-by-one with a same-address BRAM collision, butterfly overflow — fixed
+with per-stage 1/2 scaling, divide-by-512 overall — and twiddle gain on the
+trivial stages), pipelined, and **verified against a Double-precision
+reference DFT**: impulse, single tones at bins 5/100/383, and a two-tone
+case, worst component error ~5 LSB, 6/6 tests passing. Re-measured:
 
-- **It fails timing as written: Fmax 25.5 MHz against a 100 MHz
-  constraint**, and `nextpnr` exits non-zero. The cause is visible in the
-  ratio of 4,620 LUT4 to only 486 FF: long combinational paths with almost no
-  pipeline registers, since `cmul` does a 16x16 multiply, a subtract and a
-  shift in one clock straight into the next stage's adder. A production R2SDF
-  registers the multiplier outputs and pipelines each butterfly. That *adds*
-  flip-flops (0.6% used, so effectively free here) and usually *reduces* LUT
-  pressure, so the area conclusion holds either way. Whether 25 MHz is even a
-  problem depends on the post-decimation sample rate — check before fixing.
-- **Not numerically verified.** The model is structurally faithful — its
-  resource shape is a production R2SDF's resource shape — but it has not been
-  checked against a reference DFT and stage-to-stage pipeline alignment has
-  not been validated cycle-by-cycle. Treat the area figures as evidence for
-  the board decision; verify the maths before it processes radar data.
+   | Resource | Sizing model | Verified + pipelined |
+   |---|---|---|
+   | TRELLIS_COMB (LUT4) | 4,620 | **3,537 (4.2%)** |
+   | TRELLIS_FF | 486 | 3,729 |
+   | MULT18X18D | 34 | 28 |
+   | DP16KD | 3 | 10 |
+   | Fmax @ 100 MHz constraint | 25.5 MHz FAIL | **123.6 MHz PASS** |
+
+   Pipelining *reduced* LUTs while fixing timing, as predicted. Latency is
+   547 cycles at one sample per clock. Numbers from the same
+   yosys/nextpnr-ecp5 flow; source at `theremin/clash/src/Theremin/Fft.hs`,
+   tests at `theremin/clash/test/FftSpec.hs`.
 
 **Consequence for maiden36:** capacity is no longer the open question. On
 measured numbers the 85F fits the FFT roughly seventeen times over, so the
