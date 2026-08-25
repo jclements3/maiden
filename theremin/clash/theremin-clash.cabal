@@ -56,8 +56,6 @@ library
         Theremin.Fft
         Theremin.Fft.Twiddle
         Theremin.EdgeToPulsePosition
-        Theremin.Fft
-        Theremin.Fft.Twiddle
         Theremin.IirNStage
         Theremin.Pwm
         Theremin.SensorPeriodMeasure
