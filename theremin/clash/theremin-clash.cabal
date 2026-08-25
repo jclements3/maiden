@@ -43,6 +43,8 @@ library
     exposed-modules:
         Theremin.DelayDiffFilter
         Theremin.EdgeToPulsePosition
+        Theremin.Fft
+        Theremin.Fft.Twiddle
         Theremin.IirNStage
         Theremin.Pwm
         Theremin.SensorPeriodMeasure
@@ -52,7 +54,8 @@ test-suite spec
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Spec.hs
-    other-modules:    IirSpec
+    other-modules:    FftSpec
+                      IirSpec
                       SensorSpec
     build-depends:
         theremin-clash,
