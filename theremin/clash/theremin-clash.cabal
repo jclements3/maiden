@@ -51,6 +51,10 @@ library
     build-tool-depends: clash-ghc:clash
     hs-source-dirs:   src
     exposed-modules:
+        Maiden.Cfar
+        Maiden.Cic
+        Maiden.Cordic
+        Maiden.Fir
         Theremin.DelayDiffFilter
         Theremin.EdgeSampler
         Theremin.Fft
@@ -66,7 +70,11 @@ test-suite spec
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Spec.hs
-    other-modules:    FftSpec
+    other-modules:    CfarSpec
+                      CicSpec
+                      CordicSpec
+                      FftSpec
+                      FirSpec
                       IirSpec
                       SensorSpec
                       SensorTopSpec
