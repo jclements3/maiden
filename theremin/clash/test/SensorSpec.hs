@@ -16,6 +16,7 @@ import qualified Prelude as P
 import Test.Tasty
 import Test.Tasty.HUnit
 
+import Theremin.DelayDiffFilter
 import Theremin.SensorPeriodMeasure
 
 -- | Build an edge stream with a fixed spacing between successive edges.
@@ -49,7 +50,23 @@ payload = toInteger . (`clearBit` 31)
 
 tests :: TestTree
 tests = testGroup "theremin_sensor_period_measure"
-  [ testCase "outputs start cleared after reset" $ do
+  [ testCase "structural delayDiffFilter matches the pure model" $ do
+      -- Pins the blockRam rewrite to ddfStep cycle for cycle: bursty and
+      -- sparse WR patterns, varied data, a mid-run reset pulse, and enough
+      -- writes to wrap the 32-deep buffer (n=5) several times.
+      let n = 3_000
+          ins = [ DdfIn { diReset = if i == 1_100 then high else low
+                        , diValue = fromIntegral ((i * 2654435761) `mod` 1048576)
+                        , diWr    = if (i * 7) `mod` 11 < 4 then high else low }
+                | i <- [0 .. n - 1] ] :: [DdfIn 20]
+          structural = simulateN @System n
+            (delayDiffFilter @5 0) ins
+          model = P.map (\st -> DdfOut (dsChanged st) (dsDiff st))
+            (P.take n (P.scanl (ddfStep @5 @20 0)
+                               (initialState :: DdfState 5 20) ins))
+      structural @?= model
+
+  , testCase "outputs start cleared after reset" $ do
       let outs = runSensor (edgeStream 8 16 40)
       payload (soPitchPeriodStage1 (P.head outs)) @?= 0
 

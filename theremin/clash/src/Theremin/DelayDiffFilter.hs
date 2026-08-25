@@ -123,13 +123,62 @@ ddfStep offset s DdfIn{..}
   addrOverflow = dsAddr s == maxBound
 
 -- | Synchronous delay-difference filter.
+--
+-- Structural implementation: the delay buffer is 'blockRam', which lands in
+-- @DP16KD@ — matching the SV's BRAM path at these parameters. The first
+-- version of this function kept the buffer as a @Vec@ in Moore state, which
+-- becomes @2^n * v@ fabric flip-flops plus mux forests (~12k FF per 512x24
+-- instance) and made the sensor top practically unroutable. Same lesson as
+-- the IIR's state bank; see the README.
+--
+-- The BRAM's synchronous-read output register plays the role of the model's
+-- @dsRamRead@ register: the read address is presented so that it is frozen
+-- between WR strobes (it only moves when @dsAddr@ moves), so the data out of
+-- the RAM during any cycle equals the value the model holds in @dsRamRead@
+-- during that cycle. Read and write addresses differ by @1 + offset@ at
+-- every write, so the write-first collision behaviour of 'blockRam' is never
+-- exercised (offset is 0 in both theremin instances). Behaviour is pinned to
+-- 'ddfStep' by the equivalence test in @SensorSpec@.
 delayDiffFilter ::
   forall n v dom.
-  (HiddenClockResetEnable dom, KnownNat n, KnownNat v) =>
+  (HiddenClockResetEnable dom, KnownNat n, KnownNat v, 1 <= 2 ^ n) =>
   BitVector n ->  -- ^ @DELAY_COUNTER_OFFSET@
   Signal dom (DdfIn v) ->
   Signal dom (DdfOut v)
-delayDiffFilter offset =
-  moore (ddfStep offset) out (initialState :: DdfState n v)
+delayDiffFilter offset din = DdfOut <$> changed <*> diff
  where
-  out s = DdfOut { doChanged = dsChanged s, doDiff = dsDiff s }
+  rstB = bitToBool . diReset <$> din
+  wrB  = bitToBool . diWr <$> din
+  value = diValue <$> din
+
+  reg :: NFDataX a => a -> Signal dom a -> Signal dom a
+  reg i next = register i (mux rstB (pure i) next)
+
+  -- Registers, updated only on WR (as in the model's guard).
+  upd :: NFDataX a => a -> Signal dom a -> Signal dom a
+  upd i next = r where r = reg i (mux wrB next r)
+
+  addr :: Signal dom (BitVector n)
+  addr = upd 0 (addr + 1)
+
+  initialized :: Signal dom Bool
+  initialized = upd False (initialized .||. (addr .==. pure maxBound))
+
+  -- Frozen-between-writes read address: on a WR cycle the *next* slot
+  -- (addr+1+offset) is presented so the BRAM captures it at the edge; on
+  -- idle cycles addr has already incremented, so addr+offset re-presents the
+  -- same physical address and the output register simply holds.
+  presentAddr :: Signal dom (Index (2 ^ n))
+  presentAddr = unpack . resize <$>
+    mux wrB (addr + 1 + pure offset) (addr + pure offset)
+
+  wrPort = mux (rstB .||. fmap not wrB)
+               (pure Nothing)
+               (Just <$> bundle (unpack . resize <$> addr, value))
+
+  ramOut :: Signal dom (BitVector v)
+  ramOut = blockRam (replicate (SNat @(2 ^ n)) 0) presentAddr wrPort
+
+  diff = upd 0 (mux initialized (value - ramOut) diff)
+  changed :: Signal dom Bit
+  changed = upd 0 (mux initialized (complement <$> changed) changed)
