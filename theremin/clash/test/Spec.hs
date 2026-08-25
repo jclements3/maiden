@@ -20,6 +20,10 @@ import Test.Tasty.HUnit
 import Test.Tasty.Hedgehog (testPropertyNamed)
 
 import Theremin.Pwm
+import qualified CfarSpec
+import qualified CicSpec
+import qualified CordicSpec
+import qualified FirSpec
 import qualified IirSpec
 import qualified SensorSpec
 
@@ -113,4 +117,10 @@ tests = testGroup "theremin_pwm"
   ]
 
 main :: IO ()
-main = defaultMain (testGroup "theremin-clash" [tests, IirSpec.tests, SensorSpec.tests])
+main = defaultMain (testGroup "theremin-clash"
+  [ tests, IirSpec.tests, SensorSpec.tests
+  , CicSpec.tests
+  , CordicSpec.tests
+  , FirSpec.tests
+  , CfarSpec.tests
+  ])

@@ -41,6 +41,10 @@ library
     import:           clash-opts
     hs-source-dirs:   src
     exposed-modules:
+        Maiden.Cfar
+        Maiden.Cic
+        Maiden.Cordic
+        Maiden.Fir
         Theremin.DelayDiffFilter
         Theremin.EdgeToPulsePosition
         Theremin.IirNStage
@@ -52,7 +56,11 @@ test-suite spec
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Spec.hs
-    other-modules:    IirSpec
+    other-modules:    CfarSpec
+                      CicSpec
+                      CordicSpec
+                      FirSpec
+                      IirSpec
                       SensorSpec
     build-depends:
         theremin-clash,
