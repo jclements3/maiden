@@ -49,29 +49,64 @@ sizing question is architectural, not a choice of part.*
    hx8k → ECP5 but leaving the family entirely (Artix-7 200T class), with
    the toolchain and cost consequences that implies.
 
-3. **But 139k is an artifact of the implementation, not the transform.**
-   That figure is the signature of a *fully unrolled* behavioral FFT —
-   every butterfly instantiated in parallel — which is what synthesis
-   produces when an FFT is written behaviorally and flattened. A streaming
-   radix-2 single-delay-feedback FFT computes the same 512-point transform
-   with ~log2(512) = 9 butterfly stages, a handful of complex multipliers
-   mapped to `MULT18X18D`, and delay lines in `DP16KD` block RAM. Expected
-   landing zone is low thousands of LUT4s against the **156 DSPs and 208
-   BRAMs the 85F has sitting entirely unused** in the current estimate.
+3. **139k is an artifact of the implementation, not the transform —
+   now measured, not argued.** That figure is the signature of a *fully
+   unrolled* behavioral FFT, every butterfly instantiated in parallel, which
+   is what synthesis produces when an FFT is written behaviorally and
+   flattened. A streaming radix-2 single-delay-feedback (R2SDF) FFT computes
+   the same 512-point transform with log2(512) = 9 butterfly stages, one
+   complex multiplier per stage in `MULT18X18D`, and the delay lines in
+   `DP16KD` block RAM.
 
-4. **This lever is already demonstrated in-tree.** `iir_nstage_pow2k`, ported
-   to Clash at `theremin/clash/src/Theremin/IirNStage.hs`, gets five filter
-   stages out of one adder by time-multiplexing: **175 LUT4 / 67 FF / 0 BRAM
-   / 132 MHz** measured on the LFE5U-85F, versus five parallel copies. The
-   same trade applied to the FFT is what makes MAIDEN fit.
+   Written in Clash (`theremin/clash/src/Theremin/Fft.hs`) and put through
+   `yosys synth_ecp5` + `nextpnr-ecp5` on the LFE5U-85F, CABGA381:
 
-**Consequence for maiden36:** the decision to take is the FFT *architecture*,
-not the board. Before committing the remaining two boards (~$360), synthesize
-a streaming FFT through the same flow (`yosys synth_ecp5` + `nextpnr-ecp5`,
-no hardware required — see `theremin/clash/Makefile`) and get a real
-LUT4/DSP/BRAM number. If it lands as expected, one 85F holds the whole chain
-and the ×3 line should be re-examined: three boards are for three stations,
-not for capacity.
+   | Resource | Used | Available | % |
+   |---|---|---|---|
+   | TRELLIS_COMB (LUT4) | **4,620** | 83,640 | **5.5%** |
+   | TRELLIS_FF | 486 | 83,640 | 0.6% |
+   | MULT18X18D | 34 | 156 | 22% |
+   | DP16KD | 3 | 208 | 1.4% |
+
+   **A 30x reduction against the 139k behavioral figure.** The behavioral
+   version overflowed the largest ECP5 by 66%; this one uses 5.5% of it. The
+   difference went into the DSP and BRAM columns the behavioral estimate left
+   at zero while spending fabric instead.
+
+4. **This lever is also demonstrated on a second block.** `iir_nstage_pow2k`,
+   ported to Clash at `theremin/clash/src/Theremin/IirNStage.hs`, gets five
+   filter stages out of one adder by time-multiplexing: **175 LUT4 / 67 FF /
+   0 BRAM / 132 MHz** measured on the same part, versus five parallel copies.
+
+**Caveats on the FFT number — it settles capacity, not correctness.**
+
+- **It fails timing as written: Fmax 25.5 MHz against a 100 MHz
+  constraint**, and `nextpnr` exits non-zero. The cause is visible in the
+  ratio of 4,620 LUT4 to only 486 FF: long combinational paths with almost no
+  pipeline registers, since `cmul` does a 16x16 multiply, a subtract and a
+  shift in one clock straight into the next stage's adder. A production R2SDF
+  registers the multiplier outputs and pipelines each butterfly. That *adds*
+  flip-flops (0.6% used, so effectively free here) and usually *reduces* LUT
+  pressure, so the area conclusion holds either way. Whether 25 MHz is even a
+  problem depends on the post-decimation sample rate — check before fixing.
+- **Not numerically verified.** The model is structurally faithful — its
+  resource shape is a production R2SDF's resource shape — but it has not been
+  checked against a reference DFT and stage-to-stage pipeline alignment has
+  not been validated cycle-by-cycle. Treat the area figures as evidence for
+  the board decision; verify the maths before it processes radar data.
+
+**Consequence for maiden36:** capacity is no longer the open question. On
+measured numbers the 85F fits the FFT roughly seventeen times over, so the
+part is not the constraint and there is no reason to leave the ECP5 family.
+What remains for maiden36 is timing closure and functional verification of the
+FFT, neither of which needs hardware. **The x3 line should be justified as
+three stations, not as capacity** — one board is sufficient for all sizing and
+bring-up work, and the remaining two (~$360) can wait on the station build.
+
+*Method note: every figure above comes from synthesis and place-and-route
+against the vendor device database on a laptop, with no FPGA attached.
+Sizing questions do not require buying boards; hardware is for the physical
+questions (oscillator startup, antenna behaviour, PPS discipline).*
 
 The single ULX3S 85F now on order is sufficient to settle this and to run the
 theremin de-risking build; the ×2 balance stays deferred pending the above.
