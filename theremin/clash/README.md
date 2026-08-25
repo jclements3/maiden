@@ -57,6 +57,19 @@ Through `yosys synth_ecp5` + `nextpnr-ecp5`, 100 MHz constraint:
 | `edge_to_pulse_position` — SV | 25 | 37 | 0 | 0 | 328 MHz |
 | `delay_diff_filter` — SV (defaults) | 241 | 34 | 0 | 0 | 142 MHz |
 | `fft512_r2sdf` — Clash, verified + pipelined | 3,537 | 3,729 | 28 | 10 | **123.6 MHz PASS** |
+| `theremin_top` — complete instrument, osc pins → audio | 1,816 | 452 | 0 | 2 | 86.7 MHz (**PASS at 75**) |
+| `audio_nco` | 38 | 32 | 0 | 0 | 294 MHz |
+| `audio_dsm_dac` | 25 | 17 | 0 | 0 | 348 MHz |
+
+**The memory-idiom lesson, confirmed twice:** `DelayDiffFilter` originally
+held its two 512-deep buffers as `Vec`s in Moore state — the sensor top
+measured 27.7k LUT4 / 23.5k FF and would not route at 100 MHz. Rewritten on
+`blockRam` (pinned by a cycle-exact equivalence test), the complete
+`theremin_top` is **1,816 LUT4 / 452 FF / 2 BRAM — a 20x reduction** — and
+closes at 75 MHz (Fmax 86.7; the critical path is the 36-bit pitch IIR, and
+75 MHz still gives ~0.055-cent period resolution, ~100x below audibility).
+Rule: `Vec` in register state is for small banks only; memories go in
+`asyncRam`/`blockRam`.
 
 **The Clash-viability headline:** with the right idiom (`asyncRam` for a
 distributed-RAM state bank instead of a `Vec` in Moore state), the Clash IIR
