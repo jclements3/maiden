@@ -42,13 +42,13 @@ test:
 ## Generate VHDL (used for GHDL simulation and co-sim against the original).
 vhdl:
 	@mkdir -p $(VHDL_DIR)
-	cabal run -v0 clash -- $(TOP) --vhdl -outputdir $(BUILD)/clash-out -i src \
+	cabal run -v0 clash -- -isrc $(TOP) --vhdl -outputdir $(BUILD)/clash-out \
 		-fclash-hdldir $(VHDL_DIR)
 
 ## Generate Verilog (used for the ECP5 open synthesis flow).
 verilog:
 	@mkdir -p $(VLOG_DIR)
-	cabal run -v0 clash -- $(TOP) --verilog -outputdir $(BUILD)/clash-out -i src \
+	cabal run -v0 clash -- -isrc $(TOP) --verilog -outputdir $(BUILD)/clash-out \
 		-fclash-hdldir $(VLOG_DIR)
 
 ## Analyse + elaborate the generated VHDL under GHDL: proves the output is
