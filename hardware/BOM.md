@@ -100,13 +100,12 @@ case, worst component error ~5 LSB, 6/6 tests passing. Re-measured:
    yosys/nextpnr-ecp5 flow; source at `theremin/clash/src/Theremin/Fft.hs`,
    tests at `theremin/clash/test/FftSpec.hs`.
 
-**Consequence for maiden36:** capacity is no longer the open question. On
-measured numbers the 85F fits the FFT roughly seventeen times over, so the
-part is not the constraint and there is no reason to leave the ECP5 family.
-What remains for maiden36 is timing closure and functional verification of the
-FFT, neither of which needs hardware. **The x3 line should be justified as
-three stations, not as capacity** — one board is sufficient for all sizing and
-bring-up work, and the remaining two (~$360) can wait on the station build.
+**Consequence for maiden36:** the FFT question is closed — verified,
+timing-clean at 123.6 MHz, and 4.2% of the part, so the 85F is not the
+constraint and there is no reason to leave the ECP5 family. **The x3 line
+should be justified as three stations, not as capacity** — one board is
+sufficient for all bring-up work, and the remaining two (~$360) can wait on
+the station build.
 
 *Method note: every figure above comes from synthesis and place-and-route
 against the vendor device database on a laptop, with no FPGA attached.
