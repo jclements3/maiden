@@ -15,7 +15,7 @@ and recording order numbers/ETAs is a human task (see card note).
 | 4 | 1080p30 global-shutter USB3 machine-vision camera + lens | 3 (60°, 35°, 60°) | GS-001 — confirm global shutter AND strobe output in the datasheet before ordering; do not cheap out | $450 | TO ORDER (model TBD at order time) | — |
 | 5 | u-blox MAX-M10S breakout with PPS pin | 4 (3 stations + logger) | SYS-006, AB-001 | $80 | TO ORDER | — |
 | 6 | Raspberry Pi 5 (8 GB) + SSD + SD card | 3 | SYS-005 Ch. 10 recorders | $360 | TO ORDER | — |
-| 7 | FPGA dev board — ULX3S 85F, Lattice ECP5 LFE5U-85F (see note A) | 3 | GS-002 DSP + SYS-006 timebase | $180–540 | **1 ON ORDER** (24 Aug 2026); ×2 balance deferred pending note A | — |
+| 7 | FPGA dev board — ULX3S 85F, Lattice ECP5 LFE5U-85F (see note A) | 3 | GS-002 DSP + SYS-006 timebase | $315 ea ($315–945) | **1 ON ORDER** (24 Aug 2026, $315 quoted); ×2 balance deferred pending note A | — |
 | 8 | iCEstick + HX8K breakout | 1 + 1 | dev/bring-up boards | $0 | **OWNED** (theremin) | — |
 | 9 | MCP3202-class SPI ADC (2 ch, 12-bit) | 3 + 1 spare | lesson 17 I/Q capture front end | $45 | 1 **OWNED** (theremin), 3 TO ORDER | — |
 | 10 | Matek H743 + M10 GNSS | 1 | AB-001 truth logger | $110 | TO ORDER | — |
@@ -24,15 +24,16 @@ and recording order numbers/ETAs is a human task (see card note).
 | 13 | Weatherproof case, 74HC14s, corner-reflector foil, checkerboard print | 3 + misc | GS-006 enclosures, calibration targets | $120 | TO ORDER | — |
 | 14 | Breadboard, jumpers, headers | kit | bench | $0 | **OWNED** (theremin) | — |
 
-**Total to order: ≈ $1,650–2,010** (owned lines excluded) — consistent
-with lesson 16's ~$2k order of magnitude. Costliest line is cameras
+**Total to order: ≈ $1,785–2,415** (owned lines excluded; the spread is 1
+vs 3 FPGA boards at the firm $315/board quote) — still lesson 16's ~$2k
+order of magnitude. Costliest line is cameras
 (#4); the lesson's rolling-shutter warning is the reason.
 
 **Note A — FPGA board decision (maiden33 outcome, revised 24 Aug 2026).**
 The maiden33/35 audit is already in: the behavioral 512-pt FFT synthesizes
 to ~139k LUT4s — far over hx8k even after the planned BRAM-explicit rewrite
 it may not fit. Pre-empting the ECP5 escape hatch per the card's option:
-**ULX3S 85F ×3 (~$540)** is the recommended line; final call at maiden36
+**ULX3S 85F ×3 (~$945 at the quoted $315/board)** is the recommended line; final call at maiden36
 bench bring-up per the audit note (results/design-notes/decimation-audit.md).
 
 *Revision — the escape hatch does not clear the bar as stated, and the
@@ -104,7 +105,7 @@ case, worst component error ~5 LSB, 6/6 tests passing. Re-measured:
 timing-clean at 123.6 MHz, and 4.2% of the part, so the 85F is not the
 constraint and there is no reason to leave the ECP5 family. **The x3 line
 should be justified as three stations, not as capacity** — one board is
-sufficient for all bring-up work, and the remaining two (~$360) can wait on
+sufficient for all bring-up work, and the remaining two (~$630) can wait on
 the station build.
 
 *Method note: every figure above comes from synthesis and place-and-route
