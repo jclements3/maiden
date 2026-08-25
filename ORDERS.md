@@ -81,7 +81,26 @@ likely good enough to hear the thing work, so **buy nothing here until the
 sensor path runs**. Only if the resistor DAC proves too noisy would you add an
 I²S DAC board ([I2S DAC module](https://www.amazon.com/s?k=I2S+DAC+module+PCM5102)).
 
-## 6. Not needed
+## 6. Cables, power, and interconnect (gap check — added 25 Aug)
+
+Audit of everything between the boxes. Good news first: **no special FPGA
+programmer is needed** — the ULX3S programs and talks UART over its onboard
+USB-serial (FT231X); `fujprog` or `openFPGALoader` on the lab machine plus an
+ordinary cable is the whole path.
+
+| Item | Why | Search |
+|---|---|---|
+| Micro-USB **data** cable ×2 | ULX3S programming/UART — many micro-USB cables are charge-only; a bad one looks like a dead board | [micro USB data cable](https://www.amazon.com/s?k=micro+usb+data+cable+short) |
+| 0.1" header strips + solder | ULX3S GPIO holes ship unpopulated on some batches; needed to jumper oscillators/ADC | [2.54mm header strip](https://www.amazon.com/s?k=2.54mm+male+female+header+strip) |
+| 3.5 mm audio cable + small powered speaker | The theremin has an audio jack and nothing listed to hear it with | [powered speaker 3.5mm](https://www.amazon.com/s?k=small+powered+speaker+3.5mm+aux) |
+| USB-C PSU 5 V/5 A (or buck output cable) ×3 | Pi 5 recorders — BOM #6 lists Pi+SSD+SD but no supply; on-station the 4S pack + buck covers it, at the desk you need the PSU | [Raspberry Pi 5 power supply 27W](https://www.amazon.com/s?k=raspberry+pi+5+official+power+supply+27W) |
+| USB3 camera cables (check what ships) | Machine-vision cameras often ship bare; confirm cable + locking screws at order time (note on BOM #4) | vendor page at camera order |
+| GNSS antennas (check breakout) | MAX-M10S breakouts vary: some include a patch antenna, some need an active antenna + u.FL/SMA pigtail | [GNSS active antenna u.FL](https://www.amazon.com/s?k=GNSS+active+antenna+uFL+SMA) |
+
+Rough add: ~$60–120. This is exactly what the whitepaper's
+spares/contingency reserve exists for — no budget-line change needed.
+
+## 7. Not needed
 
 - **iCE40 boards** — you already own the iCEstick and HX8K breakout (BOM #8,
   marked OWNED). They are bring-up boards and too small for the FFT anyway.
