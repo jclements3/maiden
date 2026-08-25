@@ -70,6 +70,27 @@ against the behavioral estimate's 139k (166% of the part), with the work moved
 into DSPs and BRAM — verified against a reference DFT (worst error ~5 LSB) and
 timing-clean at 123.6 MHz. History and method in `hardware/BOM.md` Note A.
 
+## MAIDEN radar DSP blocks (new, `src/Maiden/`)
+
+The CW-Doppler chain MAIDEN actually needs, written in Clash with tests and
+measured through the same flow (post-route, 100 MHz constraint):
+
+| Block | LUT4 | FF | DSP | BRAM | Fmax | Tests |
+|---|---|---|---|---|---|---|
+| `Maiden.Cic` (N=3, R=4, I+Q pair) | 272 | 257 | 0 | 0 | 136.0 MHz | 7 |
+| `Maiden.Cordic` (16-iter vectoring, pipelined) | 2,989 | 909 | 0 | 0 | 189.5 MHz | 8 |
+| `Maiden.Fir` (15-tap transposed) | 570 | 553 | 8 | 0 | 236.4 MHz | 6 |
+| `Maiden.Cfar` (CA-CFAR, 2x16 ref + guards) | 296 | 246 | 2 | 0* | 123.6 MHz | 5 |
+
+\* CFAR window storage is distributed RAM (10 `TRELLIS_DPR16X4`), not fabric FFs.
+
+**Full-chain estimate** (CIC pair + 2x FIR + verified FFT + CORDIC + CFAR):
+**~8,234 LUT4 (9.8%) / ~6,247 FF / 46 DSP (29%) / 10 BRAM (4.8%)** of the
+LFE5U-85F — roughly 10x LUT headroom; DSPs are the tightest resource at under
+a third used. FIR uses 8 DSPs, not 15: yosys shares the mirrored-tap products
+of the symmetric coefficient set. FIR taps are a representative inverse-sinc
+shape pending VT-05's band decision.
+
 `delay_diff_filter` here is at its *default* parameters (64-deep, 20-bit),
 which take the distributed-RAM path. The theremin instantiates it 512-deep,
 crossing `BRAM_ADDR_BITS_THRESHOLD`, so that instance trades these LUTs for a
