@@ -34,7 +34,7 @@ All numbers below are from real place-and-route on that part, not estimates.
 | `theremin_sensor_period_measure` | 515 | yes, below the ISERDES boundary | via end-to-end chain tests |
 | `EdgeSampler` (new, replaces ISERDES front end) | — | yes | via end-to-end chain tests |
 | `SensorTop` (new: raw osc pins -> filtered period, zero Xilinx primitives) | — | yes | yes — 6 end-to-end cases, exact period recovery |
-| `Fft` (new: 512-pt streaming R2SDF, MAIDEN sizing) | — | yes | sizing model only, **not numerically verified** |
+| `Fft` (new: 512-pt streaming R2SDF, MAIDEN sizing) | — | yes | yes — 6/6 vs Double-precision reference DFT |
 | `bit_change_detector` | 269 | no | — |
 | `oversampling_edge_detector` | 134 | superseded by `EdgeSampler` (was ISERDESE2-blocked) | — |
 | `oversampling_iserdes` | 108 | superseded (resolution analysis: 1x sampling + 512-tap averaging = ~0.02 cent) | — |
@@ -56,7 +56,7 @@ Through `yosys synth_ecp5` + `nextpnr-ecp5`, 100 MHz constraint:
 | **`iir_nstage_pow2k` — Clash, `asyncRam` idiom** | **175** | **67** | 0 | 0 | 129 MHz |
 | `edge_to_pulse_position` — SV | 25 | 37 | 0 | 0 | 328 MHz |
 | `delay_diff_filter` — SV (defaults) | 241 | 34 | 0 | 0 | 142 MHz |
-| `fft512_r2sdf` — Clash (sizing model) | 4,620 | 486 | 34 | 3 | 25.5 MHz **FAIL** |
+| `fft512_r2sdf` — Clash, verified + pipelined | 3,537 | 3,729 | 28 | 10 | **123.6 MHz PASS** |
 
 **The Clash-viability headline:** with the right idiom (`asyncRam` for a
 distributed-RAM state bank instead of a `Vec` in Moore state), the Clash IIR
@@ -65,11 +65,10 @@ synthesises to *exactly* the hand-written SV's resource count — 175 LUT4 /
 cycle-exact-verified against a property-tested pure model. The 3x penalty of
 the naive version was idiom, not language.
 
-**The MAIDEN sizing headline:** the streaming FFT is 5.5% of the part's LUT4s
-against the behavioral estimate's 139k (166% of the part) — a 30x reduction,
-with the work moved into DSPs and BRAM. It fails timing unpipelined (25.5 MHz)
-and is not yet numerically verified; see `hardware/BOM.md` Note A for the full
-caveats.
+**The MAIDEN sizing headline:** the streaming FFT is 4.2% of the part's LUT4s
+against the behavioral estimate's 139k (166% of the part), with the work moved
+into DSPs and BRAM — verified against a reference DFT (worst error ~5 LSB) and
+timing-clean at 123.6 MHz. History and method in `hardware/BOM.md` Note A.
 
 `delay_diff_filter` here is at its *default* parameters (64-deep, 20-bit),
 which take the distributed-RAM path. The theremin instantiates it 512-deep,
