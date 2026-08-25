@@ -55,6 +55,11 @@ library
         Maiden.Cic
         Maiden.Cordic
         Maiden.Fir
+        Theremin.Audio.DsmDac
+        Theremin.Audio.Nco
+        Theremin.Audio.PitchMap
+        Theremin.Audio.SineLut
+        Theremin.Audio.SineQuarter
         Theremin.DelayDiffFilter
         Theremin.EdgeSampler
         Theremin.Fft
@@ -64,13 +69,15 @@ library
         Theremin.Pwm
         Theremin.SensorPeriodMeasure
         Theremin.SensorTop
+        Theremin.ThereminTop
 
 test-suite spec
     import:           clash-opts
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Spec.hs
-    other-modules:    CfarSpec
+    other-modules:    AudioSpec
+                      CfarSpec
                       CicSpec
                       CordicSpec
                       FftSpec
