@@ -22,6 +22,7 @@ import Test.Tasty.Hedgehog (testPropertyNamed)
 import Theremin.Pwm
 import qualified IirSpec
 import qualified SensorSpec
+import qualified SensorTopSpec
 
 -- | Run the pure step function over a constant input for @n@ cycles,
 -- collecting the state after each edge.
@@ -113,4 +114,4 @@ tests = testGroup "theremin_pwm"
   ]
 
 main :: IO ()
-main = defaultMain (testGroup "theremin-clash" [tests, IirSpec.tests, SensorSpec.tests])
+main = defaultMain (testGroup "theremin-clash" [tests, IirSpec.tests, SensorSpec.tests, SensorTopSpec.tests])

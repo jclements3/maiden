@@ -5,6 +5,11 @@
 #     source ~/tools/oss-cad-suite/environment
 
 BUILD    := build
+
+# The clash binary from the project's own build plan (built via
+# build-tool-depends). A globally installed clash cannot be used: it refuses
+# to run against any clash-prelude instance other than its own.
+CLASH := $(shell ls -td $$HOME/.cabal/store/ghc-9.6.7/clash-ghc-1.8.5-e-clash-*/bin/clash 2>/dev/null | head -1)
 TOP      ?= Theremin.IirNStage
 ENTITY   ?= iir_nstage_pow2k
 
@@ -42,20 +47,21 @@ test:
 ## Generate VHDL (used for GHDL simulation and co-sim against the original).
 vhdl:
 	@mkdir -p $(VHDL_DIR)
-	cabal run -v0 clash -- $(TOP) --vhdl -outputdir $(BUILD)/clash-out -i src \
+	cabal exec -- $(CLASH) -isrc $(TOP) --vhdl -outputdir $(BUILD)/clash-out \
 		-fclash-hdldir $(VHDL_DIR)
 
 ## Generate Verilog (used for the ECP5 open synthesis flow).
 verilog:
 	@mkdir -p $(VLOG_DIR)
-	cabal run -v0 clash -- $(TOP) --verilog -outputdir $(BUILD)/clash-out -i src \
+	cabal exec -- $(CLASH) -isrc $(TOP) --verilog -outputdir $(BUILD)/clash-out \
 		-fclash-hdldir $(VLOG_DIR)
 
 ## Analyse + elaborate the generated VHDL under GHDL: proves the output is
 ## valid, elaboratable VHDL-2008 before it reaches synthesis.
 sim: vhdl
 	@mkdir -p $(BUILD)/work
-	ghdl -a $(GHDL_FLAGS) $$(find $(VHDL_DIR) -name '*.vhdl' -o -name '*.vhd' | sort)
+	ghdl -a $(GHDL_FLAGS) $$(find $(VHDL_DIR) -name '*_types.vhdl' | sort) \
+	                      $$(find $(VHDL_DIR) \( -name '*.vhdl' -o -name '*.vhd' \) ! -name '*_types.vhdl' | sort)
 	ghdl -e $(GHDL_FLAGS) $(GHDL_ELAB_FLAGS) $(ENTITY)
 	@echo "GHDL elaborated $(ENTITY) from Clash-generated VHDL."
 

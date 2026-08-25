@@ -1,3 +1,21 @@
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BinaryLiterals #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE MagicHash #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE NoStarIsType #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Extra.Solver #-}
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
 {-|
 Clash port of @iir_nstage_pow2k.sv@ from fpga-theremin
 (@fpga/oversampling_sensor/oversampling_sensor.srcs/sources_1/new/@).
@@ -34,6 +52,7 @@ module Theremin.IirNStage
   , IirState (..)
   , initialState
   , iirStep
+  , iirArith
   , iir
   , topEntity
   ) where
@@ -115,20 +134,9 @@ iirStep k IirParams{..} s (rst, inValue)
   -- previous stage's buffered output (@filter_value_mux@).
   value = if phase == 0 then inValue else isOutBuf s
 
-  shiftBy = snatToNum k :: Int
-
-  -- filter_sum = (in_state << K) + (value - in_state), computed signed and
-  -- K bits wider so the difference cannot wrap.
-  scaledState, diffValue, diffState, filterSum :: Signed (v + k)
-  scaledState = unpack (zeroExtend inState `shiftL` shiftBy)
-  diffValue   = unpack (zeroExtend value)
-  diffState   = unpack (zeroExtend inState)
-  filterSum   = scaledState + (diffValue - diffState)
-
-  -- filter_out = filter_sum[VALUE_BITS+K-1 : K] — a plain bit-select, so a
-  -- logical shift then truncate reproduces it exactly.
+  -- filter_out = filter_sum[VALUE_BITS+K-1 : K] — see 'iirArith'.
   filterOut :: BitVector v
-  filterOut = truncateB (pack filterSum `shiftR` shiftBy)
+  filterOut = iirArith k inState value
 
   -- Write channel: one cycle behind the read, always enabled.
   wrAddr = isPhaseDelay1 s
@@ -139,7 +147,33 @@ iirStep k IirParams{..} s (rst, inValue)
   -- filter_en goes high on the first wrap and stays high.
   filterEn' = wrapping || isFilterEn s
 
+-- | The shared per-stage arithmetic:
+-- @filter_out = ((in_state << K) + (value - in_state)) >> K@, computed
+-- signed and K bits wider so the difference cannot wrap. Factored out so the
+-- pure model ('iirStep') and the structural implementation ('iir') cannot
+-- drift apart.
+iirArith ::
+  forall k v.
+  (KnownNat k, KnownNat v) =>
+  SNat k -> BitVector v -> BitVector v -> BitVector v
+iirArith k inState value = truncateB (pack filterSum `shiftR` shiftBy)
+ where
+  shiftBy = snatToNum k :: Int
+  scaledState, diffValue, diffState, filterSum :: Signed (v + k)
+  scaledState = unpack (zeroExtend inState `shiftL` shiftBy)
+  diffValue   = unpack (zeroExtend value)
+  diffState   = unpack (zeroExtend inState)
+  filterSum   = scaledState + (diffValue - diffState)
+
 -- | Synchronous time-multiplexed IIR filter.
+--
+-- Structural implementation: the state bank is 'asyncRam' (asynchronous
+-- read, synchronous write), which yosys infers to @TRELLIS_DPR16X4@
+-- distributed RAM — matching the hand-written SV. The first version of this
+-- function kept the bank in the Moore state instead, and measured 519 LUT4 /
+-- 307 FF against the SV's 175 / 67 on the LFE5U-85F: a @Vec@ in register
+-- state becomes 240 flip-flops plus mux trees. The behaviour is pinned to
+-- the pure model by the equivalence test in @IirSpec@.
 iir ::
   forall k v dom.
   (HiddenClockResetEnable dom, KnownNat k, KnownNat v) =>
@@ -148,9 +182,39 @@ iir ::
   Signal dom Bit ->            -- ^ @RESET@, synchronous active high
   Signal dom (BitVector v) ->  -- ^ @IN_VALUE@
   Signal dom (BitVector v)     -- ^ @OUT_VALUE@
-iir k params rst inValue =
-  moore (iirStep k params) isOutReg (initialState :: IirState v)
-        (bundle (rst, inValue))
+iir k IirParams{..} rst inValue = outReg
+ where
+  rstB = bitToBool <$> rst
+
+  -- @RESET@ is a synchronous data input, not the domain reset, so every
+  -- register muxes back to its initial value on it.
+  reg :: NFDataX a => a -> Signal dom a -> Signal dom a
+  reg i next = register i (mux rstB (pure i) next)
+
+  phase, phaseD1 :: Signal dom (Index Depth)
+  phase   = reg 0 (mux wrapping 0 (phase + 1))
+  phaseD1 = reg 0 phase
+
+  wrapping = phase .==. pure (ipCycleCount - 1)
+
+  filterEn :: Signal dom Bool
+  filterEn = reg False (wrapping .||. filterEn)
+
+  -- State bank: async read at the phase counter, write one cycle behind.
+  -- The model leaves the bank untouched during RESET, so writes are gated.
+  inState = asyncRam (SNat @Depth) phase wr
+  wr = mux rstB (pure Nothing)
+               (Just <$> bundle (phaseD1, outBuf))
+
+  value = mux (phase .==. 0) inValue outBuf
+
+  filterOut = iirArith k <$> inState <*> value
+
+  outBuf :: Signal dom (BitVector v)
+  outBuf = reg 0 (mux filterEn filterOut 0)
+
+  atLast = phaseD1 .==. pure (ipStageCount - 1)
+  outReg = reg 0 (mux atLast outBuf outReg)
 
 -- | Synthesis root at the standalone parameters (@K = 6@, @VALUE_BITS = 30@,
 -- @CYCLE_COUNT = STAGE_COUNT = 5@), for a like-for-like area comparison

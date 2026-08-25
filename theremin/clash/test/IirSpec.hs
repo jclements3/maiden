@@ -17,6 +17,26 @@ import Test.Tasty.Hedgehog (testPropertyNamed)
 
 import Theremin.IirNStage
 
+-- | The structural 'iir' (asyncRam state bank) must match the pure model
+-- 'iirStep' cycle for cycle. This pins the RAM-based rewrite to the
+-- behaviour every other test in this file verifies.
+prop_structural_matches_model :: Assertion
+prop_structural_matches_model = do
+    let n = 4_000
+        -- varied deterministic input, plus a mid-run reset pulse
+        ins = [ ( if i == 1_500 then high else low
+                , fromIntegral ((i * 2654435761) `mod` 1073741824) )
+              | i <- [0 .. n - 1] ] :: [(Bit, BitVector 30)]
+        structural = simulateN @System n
+          (\i -> iir (SNat @6) params (fst <$> i) (snd <$> i)) ins
+        -- Moore alignment: output sample n reflects the state after n
+        -- inputs, so sample 0 is the initial state -- keep scanl's head,
+        -- drop its last element.
+        model = P.map isOutReg
+          (P.take n (P.scanl (iirStep (SNat @6) params)
+                             (initialState :: IirState 30) ins))
+    structural @?= model
+
 params :: IirParams
 params = IirParams { ipCycleCount = 5, ipStageCount = 5 }
 
@@ -55,7 +75,10 @@ refChain x = go (P.replicate 5 0) (200_000 :: Int)
 
 tests :: TestTree
 tests = testGroup "iir_nstage_pow2k"
-  [ testCase "output starts at zero" $
+  [ testCase "structural iir matches the pure model (incl. mid-run reset)"
+      prop_structural_matches_model
+
+  , testCase "output starts at zero" $
       P.take 5 (runConst 5 0x1234) @?= P.replicate 5 0
 
   , testCase "zero input stays at zero" $
