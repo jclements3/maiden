@@ -27,7 +27,7 @@ tF Firmware
       i# Pitch Osc
       i# Vol Osc
       a# Edge Sampler
-      ## Instantiated x2 (pitch and volume axes). Plain 1x synchronous edge sampler — the ECP5 replacement for upstreams oversampling_edge_detector.
+      ## Instantiated x2 by the parent. Plain 1x synchronous edge sampler — the ECP5 replacement for upstreams oversampling_edge_detector.
         i# RESET
         i# OSC_IN
         o# Change Flag
@@ -47,14 +47,14 @@ tF Firmware
         o# Pitch Period Stage2
         o# Vol Period Stage2
         a# Delay Diff Filter
-        ## Instantiated x2 (pitch and volume axes). Clash port of delay_diff_filter.sv from fpga-theremin.
+        ## Instantiated x2 by the parent. Clash port of delay_diff_filter.sv from fpga-theremin.
           i# Reset
           i# Value
           i# Wr
           o# Changed
           o# Diff
         a# Edge To Pulse Position
-        ## Instantiated x2 (pitch and volume axes). Clash port of edge_to_pulse_position.sv from fpga-theremin.
+        ## Instantiated x2 by the parent. Clash port of edge_to_pulse_position.sv from fpga-theremin.
           i# Reset
           i# Edge Type
           i# Edge Position
@@ -62,7 +62,7 @@ tF Firmware
           o# Changed
           o# Pulse Position
         a# Iir
-        ## Instantiated x2 (pitch and volume axes). Clash port of iir_nstage_pow2k.sv from fpga-theremin (fpga/oversampling_sensor/oversampling_sensor.srcs/sources_1/new/).
+        ## Instantiated x2 by the parent. Clash port of iir_nstage_pow2k.sv from fpga-theremin (fpga/oversampling_sensor/oversampling_sensor.srcs/sources_1/new/).
           i# RESET
           i# IN_VALUE
           o# OUT_VALUE

@@ -144,11 +144,14 @@ def main() -> int:
             rout = next((recs[r] for r in recs
                          if r.lower().startswith(fn[:4].lower())
                          and r.endswith("Out")), None)
-            # fall back to any single In/Out record in the module
-            if rin is None:
+            # fall back to the module's single In/Out record, but only
+            # when this is the module's only block (else misattribution)
+            sole = len(block_functions(src)) - (
+                1 if "topEntity" in dict(block_functions(src)) else 0) == 1
+            if rin is None and sole:
                 only = [r for r in recs if r.endswith("In")]
                 rin = recs[only[0]] if len(only) == 1 else None
-            if rout is None:
+            if rout is None and sole:
                 only = [r for r in recs if r.endswith("Out")]
                 rout = recs[only[0]] if len(only) == 1 else None
             h_ins, h_outs = haddock_ports(sig)
@@ -199,7 +202,7 @@ def main() -> int:
         print(f"{pad}a# {d['title']}")
         doc = d["doc"]
         if count > 1:
-            doc = f"Instantiated x{count} (pitch and volume axes). " + doc
+            doc = f"Instantiated x{count} by the parent. " + doc
         if doc:
             if len(doc) > 200:
                 doc = doc[:200].rsplit(" ", 1)[0] + " ..."
