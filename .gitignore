@@ -38,3 +38,6 @@ MAIDEN-display*
 MAIDEN-table-concept*
 
 upload/
+
+# Private finance repo (Tackler journal) — never in the public repo
+finance/
