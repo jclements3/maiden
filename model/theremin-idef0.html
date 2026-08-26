@@ -1,0 +1,377 @@
+<!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Theremin Plates</title><style>body{font-family:IBM Plex Mono,monospace;background:#eee;margin:0}
+.plate{background:#fff;margin:18px auto;padding:6px;box-shadow:0 1px 4px #0003;
+width:max-content;max-width:calc(100vw - 20px);overflow-x:auto;
+page-break-after:always}
+h1{font-size:16px;margin:18px}
+table{border-collapse:collapse;margin:18px;background:#fff}
+td,th{border:1px solid #999;padding:3px 9px;font-size:12px}
+a{color:#1a5276}
+.nav{font-size:12px;padding:4px 8px;background:#f4f2ea;border-bottom:1px solid #ddd;
+position:sticky;left:0}
+.nav a{text-decoration:none;margin-right:4px}
+.dim{color:#999}
+details.notes{font-size:12px;max-width:640px;padding:4px 8px;background:#fdfcf2;
+border-bottom:1px solid #eee}
+details.notes p{margin:4px 0}
+.vp{overflow:hidden;touch-action:pan-x pan-y;cursor:grab}
+.vp:active{cursor:grabbing}
+.vp svg{display:block;transform-origin:0 0}
+.hasdoc{text-decoration:underline dotted 1.5px #6a994e;cursor:help}
+svg a text{cursor:pointer}
+svg a:hover rect{fill:#f5f9ee}
+#tip{position:fixed;display:none;z-index:9;max-width:340px;background:#fffbea;
+border:1px solid #b7a;box-shadow:2px 3px 8px #0004;padding:2px 12px;
+font-size:12.5px;line-height:1.45}
+#tip p{margin:8px 0}
+#tip code{background:#eee8d5;padding:0 3px}
+</style>
+<h1 id='top'>IDEF0 drawing set &mdash; p.1: node index and interface table</h1>
+<table><tr><th>NODE</th><th>TITLE</th><th>NUMBER</th></tr>
+<tr><td><a href='#plate-T0'>T0</a></td><td class='hasdoc' data-doc='T0'>Theremin Instrument</td><td><a href='#plate-T0'>p.2</a></td></tr>
+<tr><td><a href='#plate-T2'>T2</a></td><td>Measure Period</td><td><a href='#plate-T2'>p.3</a></td></tr>
+<tr><td><a href='#plate-D0'>D0</a></td><td class='hasdoc' data-doc='D0'>Theremin Definition</td><td><a href='#plate-D0'>p.4</a></td></tr>
+<tr><td><a href='#plate-P0'>P0</a></td><td class='hasdoc' data-doc='P0'>Theremin Project</td><td><a href='#plate-P0'>p.5</a></td></tr>
+<tr><td><a href='#plate-R0'>R0</a></td><td class='hasdoc' data-doc='R0'>Theremin Requirements</td><td><a href='#plate-R0'>p.6</a></td></tr>
+<tr><td><a href='#plate-V0'>V0</a></td><td class='hasdoc' data-doc='V0'>Theremin Verification</td><td><a href='#plate-V0'>p.7</a></td></tr>
+</table>
+<table><tr><th>SOURCE</th><th>DEST</th><th>FLOW</th></tr>
+<tr><td><a href='#plate-P0'>P1.o1</a></td><td><a href='#plate-V0'>V1.i1</a></td><td>Clash Design</td></tr>
+<tr><td><a href='#plate-V0'>V1.o1</a></td><td><a href='#plate-R0'>R1.i1</a></td><td>Verified Resolution</td></tr>
+<tr><td><a href='#plate-V0'>V2.o1</a></td><td><a href='#plate-R0'>R2.i1</a></td><td>Timing Evidence</td></tr>
+<tr><td><a href='#plate-V0'>V2.o2</a></td><td><a href='#plate-R0'>R3.i1</a></td><td>Fit Evidence</td></tr>
+<tr><td><a href='#plate-V0'>V2.o3</a></td><td><a href='#plate-P0'>P3.i2</a></td><td>Verified Bitstream</td></tr>
+</table>
+<div class='plate' id='plate-T0'>
+<div class='nav'><a href='#top'>&#8962; index</a> &middot; <span class='dim'>top plate</span> &middot; <a href='javascript:history.back()'>&#8592; back</a> &middot; <a href='javascript:history.forward()'>fwd &#8594;</a> &middot; <a href='#' class='vz' title='reset pan/zoom (ctrl+scroll or pinch to zoom, middle-drag to pan)'>&#10530; reset</a> &middot; <span class='dim'>T0 &middot; p.2</span></div>
+<details class='notes'><summary>notes: Theremin Instrument</summary><p>SysML v2 <strong>action/flow view</strong> of the instrument: behavior as one plate. Measure Period decomposes (plate T2) into the DSP block chain, the same composition drill-down rule as plate D2 in QuadX.</p></details>
+<div class='vp'>
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="958" viewBox="0 0 1660 958" font-family="IBM Plex Mono,monospace">
+<rect width="1660" height="958" fill="#fdfcf8"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#222"/></marker></defs>
+<text x="1015" y="32" font-size="11" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Tuning Constants</text>
+<path d="M1010,36 V416" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<path d="M524,137 H562 Q569,137 569,144 V292 Q569,299 576,299 H632" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="573" y="218" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Oscillator Square Wave</text>
+<path d="M812,299 H850 Q857,299 857,306 V454 Q857,461 864,461 H920" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="861" y="380" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Filtered Period</text>
+<path d="M1100,461 H1138 Q1145,461 1145,468 V616 Q1145,623 1152,623 H1208" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1149" y="542" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Frequency Word</text>
+<rect x="344" y="92" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle"><tspan x="434.0" y="118">Sense Proximity</tspan></text>
+<text x="518" y="174" font-size="10" text-anchor="end" fill="#555">T1</text>
+<path d="M304,137 H344" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="300" y="140" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Hand Position</text>
+<path d="M434,212 V182" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="438" y="210" font-size="9"><tspan>LC Oscillator Pair</tspan></text>
+<a href="#plate-T2">
+<rect x="632" y="254" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle"><tspan x="722.0" y="280">Measure Period</tspan></text>
+<text x="806" y="336" font-size="10" text-anchor="end" fill="#555">T2*</text>
+</a>
+<path d="M722,374 V344" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="726" y="372" font-size="9"><tspan>ECP5 Fabric</tspan></text>
+<rect x="920" y="416" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle"><tspan x="1010.0" y="442">Map To Pitch</tspan></text>
+<text x="1094" y="498" font-size="10" text-anchor="end" fill="#555">T3</text>
+<rect x="1208" y="578" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="T4"><tspan x="1298.0" y="604">Synthesize Audio</tspan></text>
+<text x="1382" y="660" font-size="10" text-anchor="end" fill="#555">T4</text>
+<path d="M1388,623 H1428" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1432" y="626" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Audio Bitstream</text>
+<path d="M1298,698 V668" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1302" y="696" font-size="9"><tspan>ECP5 Fabric</tspan></text>
+<rect x="0" y="904" width="1660" height="54" fill="#fff" stroke="#222"/>
+<line x1="99" y1="904" x2="99" y2="958" stroke="#222"/>
+<line x1="1561" y1="904" x2="1561" y2="958" stroke="#222"/>
+<text x="10" y="920" font-size="10">NODE</text>
+<text x="10" y="940" font-size="12">T0</text>
+<text x="110" y="920" font-size="10">TITLE</text>
+<text x="110" y="940" font-size="12" class="hasdoc" data-doc="T0">Theremin Instrument</text>
+<text x="1571" y="920" font-size="10">NUMBER</text>
+<text x="1571" y="940" font-size="12">p.2</text>
+</svg>
+</div>
+</div>
+<div class='plate' id='plate-T2'>
+<div class='nav'><a href='#top'>&#8962; index</a> &middot; <a href='#plate-T0'>&#8593; T0</a> &middot; <a href='javascript:history.back()'>&#8592; back</a> &middot; <a href='javascript:history.forward()'>fwd &#8594;</a> &middot; <a href='#' class='vz' title='reset pan/zoom (ctrl+scroll or pinch to zoom, middle-drag to pan)'>&#10530; reset</a> &middot; <span class='dim'>T2 &middot; p.3</span></div>
+<div class='vp'>
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="868" viewBox="0 0 1660 868" font-family="IBM Plex Mono,monospace">
+<rect width="1660" height="868" fill="#fdfcf8"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#222"/></marker></defs>
+<path d="M524,101 H562 Q569,101 569,108 V256 Q569,263 576,263 H632" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="573" y="182" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Edge Positions</text>
+<path d="M812,263 H850 Q857,263 857,270 V418 Q857,425 864,425 H920" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="861" y="344" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Pulse Centres</text>
+<path d="M1100,425 H1138 Q1145,425 1145,432 V580 Q1145,587 1152,587 H1208" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1149" y="506" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Raw Period</text>
+<rect x="344" y="56" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="T21"><tspan x="434.0" y="82">Sample Edges</tspan></text>
+<text x="518" y="138" font-size="10" text-anchor="end" fill="#555">T21</text>
+<rect x="632" y="218" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="T22"><tspan x="722.0" y="244">Centre Pulses</tspan></text>
+<text x="806" y="300" font-size="10" text-anchor="end" fill="#555">T22</text>
+<rect x="920" y="380" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="T23"><tspan x="1010.0" y="406">Average Window</tspan></text>
+<text x="1094" y="462" font-size="10" text-anchor="end" fill="#555">T23</text>
+<rect x="1208" y="542" width="180" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="T24"><tspan x="1298.0" y="568">Smooth Period</tspan></text>
+<text x="1382" y="624" font-size="10" text-anchor="end" fill="#555">T24</text>
+<rect x="0" y="814" width="1660" height="54" fill="#fff" stroke="#222"/>
+<line x1="99" y1="814" x2="99" y2="868" stroke="#222"/>
+<line x1="1561" y1="814" x2="1561" y2="868" stroke="#222"/>
+<text x="10" y="830" font-size="10">NODE</text>
+<text x="10" y="850" font-size="12">T2</text>
+<text x="110" y="830" font-size="10">TITLE</text>
+<text x="110" y="850" font-size="12">Measure Period</text>
+<text x="1571" y="830" font-size="10">NUMBER</text>
+<text x="1571" y="850" font-size="12">p.3</text>
+</svg>
+</div>
+</div>
+<div class='plate' id='plate-D0'>
+<div class='nav'><a href='#top'>&#8962; index</a> &middot; <span class='dim'>top plate</span> &middot; <a href='javascript:history.back()'>&#8592; back</a> &middot; <a href='javascript:history.forward()'>fwd &#8594;</a> &middot; <a href='#' class='vz' title='reset pan/zoom (ctrl+scroll or pinch to zoom, middle-drag to pan)'>&#10530; reset</a> &middot; <span class='dim'>D0 &middot; p.4</span></div>
+<details class='notes'><summary>notes: Theremin Definition</summary><p>SysML v2 <strong>part definition</strong> (v1 BDD) per the QuadX mapping rule: composition = the activity tree; a box is a part rendered as the function it contributes; attributes live in doc comments.</p></details>
+<div class='vp'>
+<svg xmlns="http://www.w3.org/2000/svg" width="1552" height="760" viewBox="0 0 1552 760" font-family="IBM Plex Mono,monospace">
+<rect width="1552" height="760" fill="#fdfcf8"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#222"/></marker></defs>
+<path d="M596,101 H634 Q641,101 641,108 V256 Q641,263 648,263 H704" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="645" y="182" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Oscillator Period Signal</text>
+<path d="M938,263 H976 Q983,263 983,270 V418 Q983,425 990,425 H1046" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="987" y="344" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Filtered Period</text>
+<rect x="362" y="56" width="234" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="D1"><tspan x="479.0" y="75">Constitute Sensing</tspan><tspan x="479.0" y="89">Front End</tspan></text>
+<text x="590" y="138" font-size="10" text-anchor="end" fill="#555">D1</text>
+<path d="M322,101 H362" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="318" y="104" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Hand Proximity</text>
+<path d="M479,176 V146" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="483" y="174" font-size="9"><tspan>LC Oscillator Pair</tspan></text>
+<rect x="704" y="218" width="234" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="D2"><tspan x="821.0" y="237">Constitute Measurement</tspan><tspan x="821.0" y="251">Core</tspan></text>
+<text x="932" y="300" font-size="10" text-anchor="end" fill="#555">D2</text>
+<path d="M821,338 V308" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="825" y="336" font-size="9"><tspan>ECP5 Fabric</tspan></text>
+<rect x="1046" y="380" width="234" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="D3"><tspan x="1163.0" y="406">Constitute Audio Chain</tspan></text>
+<text x="1274" y="462" font-size="10" text-anchor="end" fill="#555">D3</text>
+<path d="M1280,425 H1320" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1324" y="428" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Audio Bitstream</text>
+<path d="M1163,500 V470" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1167" y="498" font-size="9"><tspan>ECP5 Fabric</tspan></text>
+<rect x="0" y="706" width="1552" height="54" fill="#fff" stroke="#222"/>
+<line x1="99" y1="706" x2="99" y2="760" stroke="#222"/>
+<line x1="1453" y1="706" x2="1453" y2="760" stroke="#222"/>
+<text x="10" y="722" font-size="10">NODE</text>
+<text x="10" y="742" font-size="12">D0</text>
+<text x="110" y="722" font-size="10">TITLE</text>
+<text x="110" y="742" font-size="12" class="hasdoc" data-doc="D0">Theremin Definition</text>
+<text x="1463" y="722" font-size="10">NUMBER</text>
+<text x="1463" y="742" font-size="12">p.4</text>
+</svg>
+</div>
+</div>
+<div class='plate' id='plate-P0'>
+<div class='nav'><a href='#top'>&#8962; index</a> &middot; <span class='dim'>top plate</span> &middot; <a href='javascript:history.back()'>&#8592; back</a> &middot; <a href='javascript:history.forward()'>fwd &#8594;</a> &middot; <a href='#' class='vz' title='reset pan/zoom (ctrl+scroll or pinch to zoom, middle-drag to pan)'>&#10530; reset</a> &middot; <span class='dim'>P0 &middot; p.5</span></div>
+<details class='notes'><summary>notes: Theremin Project</summary><p>The sub-project as work: MAIDEN&#x27;s de-risking vehicle from reference design to sounding hardware. Cross-links to V put design-under-test flow in the interface table alongside the R&lt;-&gt;V traceability rows.</p></details>
+<div class='vp'>
+<svg xmlns="http://www.w3.org/2000/svg" width="1786" height="994" viewBox="0 0 1786 994" font-family="IBM Plex Mono,monospace">
+<rect width="1786" height="994" fill="#fdfcf8"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#222"/></marker></defs>
+<text x="439" y="32" font-size="11" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Clash Idioms</text>
+<path d="M434,36 V128" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="763" y="68" font-size="11" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Materials Budget</text>
+<path d="M758,72 V290" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<path d="M866,335 H904 Q911,335 911,342 V481 Q911,488 918,488 H974" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="915" y="411" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Bench Hardware</text>
+<path d="M1190,497 H1228 Q1235,497 1235,504 V652 Q1235,659 1242,659 H1298" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1239" y="578" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Sounding Theremin</text>
+<rect x="326" y="128" width="216" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle"><tspan x="434.0" y="154">Port Blocks To Clash</tspan></text>
+<text x="536" y="210" font-size="10" text-anchor="end" fill="#555">P1</text>
+<path d="M286,173 H326" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="282" y="176" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Reference Design</text>
+<path d="M542,173 H582" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="586" y="176" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Clash Design  <a href="#plate-V0"><tspan fill="#1a5276">[&gt; V:V1.i1]</tspan></a></text>
+<path d="M434,248 V218" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="438" y="246" font-size="9"><tspan>Clash Toolchain</tspan></text>
+<rect x="650" y="290" width="216" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle"><tspan x="758.0" y="316">Procure Hardware</tspan></text>
+<text x="860" y="372" font-size="10" text-anchor="end" fill="#555">P2</text>
+<path d="M610,335 H650" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="606" y="338" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Orders List</text>
+<rect x="974" y="452" width="216" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="P3"><tspan x="1082.0" y="478">Bring Up Bench</tspan></text>
+<text x="1184" y="534" font-size="10" text-anchor="end" fill="#555">P3</text>
+<path d="M934,506 H974" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="930" y="509" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Verified Bitstream  <a href="#plate-V0"><tspan fill="#1a5276">[&lt; V:V2.o3]</tspan></a></text>
+<path d="M1082,572 V542" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1086" y="570" font-size="9"><tspan>Lab Machine</tspan></text>
+<rect x="1298" y="614" width="216" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="P4"><tspan x="1406.0" y="640">Harvest Lessons</tspan></text>
+<text x="1508" y="696" font-size="10" text-anchor="end" fill="#555">P4</text>
+<path d="M1514,659 H1554" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1558" y="662" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Derisked Toolchain</text>
+<rect x="0" y="940" width="1786" height="54" fill="#fff" stroke="#222"/>
+<line x1="99" y1="940" x2="99" y2="994" stroke="#222"/>
+<line x1="1687" y1="940" x2="1687" y2="994" stroke="#222"/>
+<text x="10" y="956" font-size="10">NODE</text>
+<text x="10" y="976" font-size="12">P0</text>
+<text x="110" y="956" font-size="10">TITLE</text>
+<text x="110" y="976" font-size="12" class="hasdoc" data-doc="P0">Theremin Project</text>
+<text x="1697" y="956" font-size="10">NUMBER</text>
+<text x="1697" y="976" font-size="12">p.5</text>
+</svg>
+</div>
+</div>
+<div class='plate' id='plate-R0'>
+<div class='nav'><a href='#top'>&#8962; index</a> &middot; <span class='dim'>top plate</span> &middot; <a href='javascript:history.back()'>&#8592; back</a> &middot; <a href='javascript:history.forward()'>fwd &#8594;</a> &middot; <a href='#' class='vz' title='reset pan/zoom (ctrl+scroll or pinch to zoom, middle-drag to pan)'>&#10530; reset</a> &middot; <span class='dim'>R0 &middot; p.6</span></div>
+<details class='notes'><summary>notes: Theremin Requirements</summary><p>SysML v2 <strong>requirement definition</strong> as work: each box is &quot;Impose &lt;requirement&gt;&quot;; satisfaction evidence arrives by cross-model link from V, so R&lt;-&gt;V rows in INTERFACES <em>are</em> the traceability matrix.</p></details>
+<div class='vp'>
+<svg xmlns="http://www.w3.org/2000/svg" width="1525" height="742" viewBox="0 0 1525 742" font-family="IBM Plex Mono,monospace">
+<rect width="1525" height="742" fill="#fdfcf8"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#222"/></marker></defs>
+<text x="457" y="32" font-size="11" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Musical Audibility Basis</text>
+<path d="M452,36 V92" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<rect x="335" y="92" width="234" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="R1"><tspan x="452.0" y="111">Impose Pitch</tspan><tspan x="452.0" y="125">Resolution</tspan></text>
+<text x="563" y="174" font-size="10" text-anchor="end" fill="#555">R1</text>
+<path d="M295,137 H335" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="291" y="140" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Verified Resolution  <a href="#plate-V0"><tspan fill="#1a5276">[&lt; V:V1.o1]</tspan></a></text>
+<path d="M569,137 H609" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="613" y="140" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Resolution Requirement</text>
+<rect x="677" y="254" width="234" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="R2"><tspan x="794.0" y="280">Impose Timing Closure</tspan></text>
+<text x="905" y="336" font-size="10" text-anchor="end" fill="#555">R2</text>
+<path d="M637,299 H677" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="633" y="302" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Timing Evidence  <a href="#plate-V0"><tspan fill="#1a5276">[&lt; V:V2.o1]</tspan></a></text>
+<path d="M911,299 H951" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="955" y="302" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Timing Requirement</text>
+<rect x="1019" y="416" width="234" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="R3"><tspan x="1136.0" y="442">Impose Device Fit</tspan></text>
+<text x="1247" y="498" font-size="10" text-anchor="end" fill="#555">R3</text>
+<path d="M979,461 H1019" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="975" y="464" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Fit Evidence  <a href="#plate-V0"><tspan fill="#1a5276">[&lt; V:V2.o2]</tspan></a></text>
+<path d="M1253,461 H1293" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="1297" y="464" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Fit Requirement</text>
+<rect x="0" y="688" width="1525" height="54" fill="#fff" stroke="#222"/>
+<line x1="99" y1="688" x2="99" y2="742" stroke="#222"/>
+<line x1="1426" y1="688" x2="1426" y2="742" stroke="#222"/>
+<text x="10" y="704" font-size="10">NODE</text>
+<text x="10" y="724" font-size="12">R0</text>
+<text x="110" y="704" font-size="10">TITLE</text>
+<text x="110" y="724" font-size="12" class="hasdoc" data-doc="R0">Theremin Requirements</text>
+<text x="1436" y="704" font-size="10">NUMBER</text>
+<text x="1436" y="724" font-size="12">p.6</text>
+</svg>
+</div>
+</div>
+<div class='plate' id='plate-V0'>
+<div class='nav'><a href='#top'>&#8962; index</a> &middot; <span class='dim'>top plate</span> &middot; <a href='javascript:history.back()'>&#8592; back</a> &middot; <a href='javascript:history.forward()'>fwd &#8594;</a> &middot; <a href='#' class='vz' title='reset pan/zoom (ctrl+scroll or pinch to zoom, middle-drag to pan)'>&#10530; reset</a> &middot; <span class='dim'>V0 &middot; p.7</span></div>
+<details class='notes'><summary>notes: Theremin Verification</summary><p>SysML v2 <strong>verification case</strong> view: each box is one verification activity; its o-links back to R are requirement satisfaction.</p></details>
+<div class='vp'>
+<svg xmlns="http://www.w3.org/2000/svg" width="1066" height="670" viewBox="0 0 1066 670" font-family="IBM Plex Mono,monospace">
+<rect width="1066" height="670" fill="#fdfcf8"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#222"/></marker></defs>
+<text x="380" y="32" font-size="11" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Reference Models</text>
+<path d="M375,36 V128" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="695" y="68" font-size="11" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Clock Constraint</text>
+<path d="M690,72 V290" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<rect x="272" y="128" width="207" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="V1"><tspan x="375.5" y="154">Verify Sensor Chain</tspan></text>
+<text x="473" y="210" font-size="10" text-anchor="end" fill="#555">V1</text>
+<path d="M232,173 H272" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="228" y="176" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Clash Design  <a href="#plate-P0"><tspan fill="#1a5276">[&lt; P:P1.o1]</tspan></a></text>
+<path d="M479,173 H519" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="523" y="176" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Verified Resolution  <a href="#plate-R0"><tspan fill="#1a5276">[&gt; R:R1.i1]</tspan></a></text>
+<path d="M375,248 V218" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="379" y="246" font-size="9"><tspan>Test Suite</tspan></text>
+<rect x="587" y="290" width="207" height="90" fill="#fff" stroke="#222" stroke-width="1.6"/>
+<text font-size="12" text-anchor="middle" class="hasdoc" data-doc="V2"><tspan x="690.5" y="316">Measure On Target</tspan></text>
+<text x="788" y="372" font-size="10" text-anchor="end" fill="#555">V2</text>
+<path d="M547,335 H587" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="543" y="338" font-size="9" text-anchor="end" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Clash Design</text>
+<path d="M794,317 H834" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="838" y="320" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Timing Evidence  <a href="#plate-R0"><tspan fill="#1a5276">[&gt; R:R2.i1]</tspan></a></text>
+<path d="M794,335 H834" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="838" y="338" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Fit Evidence  <a href="#plate-R0"><tspan fill="#1a5276">[&gt; R:R3.i1]</tspan></a></text>
+<path d="M794,353 H834" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="838" y="356" font-size="9" paint-order="stroke" stroke="#fdfcf8" stroke-width="3">Verified Bitstream  <a href="#plate-P0"><tspan fill="#1a5276">[&gt; P:P3.i2]</tspan></a></text>
+<path d="M690,410 V380" fill="none" stroke="#222" stroke-width="1.1" marker-end="url(#arr)"/>
+<text x="694" y="408" font-size="9"><tspan>Open Toolchain</tspan></text>
+<rect x="0" y="616" width="1066" height="54" fill="#fff" stroke="#222"/>
+<line x1="99" y1="616" x2="99" y2="670" stroke="#222"/>
+<line x1="967" y1="616" x2="967" y2="670" stroke="#222"/>
+<text x="10" y="632" font-size="10">NODE</text>
+<text x="10" y="652" font-size="12">V0</text>
+<text x="110" y="632" font-size="10">TITLE</text>
+<text x="110" y="652" font-size="12" class="hasdoc" data-doc="V0">Theremin Verification</text>
+<text x="977" y="632" font-size="10">NUMBER</text>
+<text x="977" y="652" font-size="12">p.7</text>
+</svg>
+</div>
+</div>
+<div id='tip'></div><script>const DOCS={"T0": "<p>SysML v2 <strong>action/flow view<\/strong> of the instrument: behavior as one plate. Measure Period decomposes (plate T2) into the DSP block chain, the same composition drill-down rule as plate D2 in QuadX.<\/p>", "T21": "<p>Theremin.EdgeSampler: 3-FF synchroniser + free-running counter, 1x sampling; supersedes the Xilinx ISERDES front end.<\/p>", "T22": "<p>Theremin.EdgeToPulsePosition: adjacent-edge sum cancels PWM.<\/p>", "T23": "<p>Theremin.DelayDiffFilter: 512-tap boxcar in DP16KD.<\/p>", "T24": "<p>Theremin.IirNStage: time-multiplexed 4-stage IIR, K=8.<\/p>", "T4": "<p>Nco -&gt; SineLut -&gt; DsmDac, 1-bit sigma-delta to the audio jack.<\/p>", "D0": "<p>SysML v2 <strong>part definition<\/strong> (v1 BDD) per the QuadX mapping rule: composition = the activity tree; a box is a part rendered as the function it contributes; attributes live in doc comments.<\/p>", "D1": "<p>Parts: Colpitts oscillator <em>x2<\/em> (L 1.45 mH, C0G tank), antenna <em>x2<\/em> (pitch rod, volume loop), coax feed <em>x2<\/em>.<\/p>", "D2": "<p>Parts: ECP5 LFE5U-85F on ULX3S. Sub-parts are the Clash blocks: EdgeSampler, EdgeToPulsePosition, DelayDiffFilter <em>x2<\/em> (DP16KD), IirNStage <em>x2<\/em> (DPR16X4). Measured: 1,816 LUT4 / 452 FF / 2 BRAM.<\/p>", "D3": "<p>Parts: PitchMap, Nco, SineLut (asyncRom), DsmDac (1-bit).<\/p>", "P0": "<p>The sub-project as work: MAIDEN&#x27;s de-risking vehicle from reference design to sounding hardware. Cross-links to V put design-under-test flow in the interface table alongside the R&lt;-&gt;V traceability rows.<\/p>", "P3": "<p>Lab machine flashes over USB-serial; oscillators verified on scope before FPGA integration.<\/p>", "P4": "<p>The point of the sub-project: toolchain, idioms, and measured numbers flow to MAIDEN proper.<\/p>", "R0": "<p>SysML v2 <strong>requirement definition<\/strong> as work: each box is &quot;Impose &lt;requirement&gt;&quot;; satisfaction evidence arrives by cross-model link from V, so R&lt;-&gt;V rows in INTERFACES <em>are<\/em> the traceability matrix.<\/p>", "R1": "<p>Threshold: period resolution well under 1 cent of pitch. Analysis: 1x @ 75 MHz + 512-tap averaging = ~0.055 cent.<\/p>", "R2": "<p>Threshold: every block meets its clock constraint post-route.<\/p>", "R3": "<p>Threshold: full design fits LFE5U-85F. Measured: 2% LUT4.<\/p>", "V0": "<p>SysML v2 <strong>verification case<\/strong> view: each box is one verification activity; its o-links back to R are requirement satisfaction.<\/p>", "V1": "<p>80-test tasty/hedgehog suite; end-to-end square-wave recovery is exact (2<em>512<\/em>half); IIR pinned cycle-exact to pure model.<\/p>", "V2": "<p>yosys synth_ecp5 + nextpnr-ecp5, LFE5U-85F CABGA381. theremin_top 86.7 MHz Fmax, PASS at 75 MHz; 1,816 LUT4 (2%).<\/p>"};
+const tip=document.getElementById('tip');
+let pin=null;
+function show(k,x,y){tip.innerHTML=DOCS[k]||'';tip.style.display='block';
+ const r=tip.getBoundingClientRect();
+ x=Math.min(x+14,innerWidth-r.width-8);y=Math.min(y+16,innerHeight-r.height-8);
+ tip.style.left=Math.max(4,x)+'px';tip.style.top=Math.max(4,y)+'px';}
+function hide(){tip.style.display='none';pin=null;}
+const canHover=matchMedia('(hover:hover)').matches;
+document.addEventListener('mousemove',e=>{if(!canHover||pin)return;
+ const t=e.target.closest?e.target.closest('.hasdoc'):null;
+ if(t)show(t.dataset.doc,e.clientX,e.clientY);else hide();});
+document.addEventListener('click',e=>{
+ const t=e.target.closest?e.target.closest('.hasdoc'):null;
+ if(t&&!t.closest('a')){
+  if(pin===t.dataset.doc){hide();}
+  else{pin=t.dataset.doc;show(pin,e.clientX,e.clientY);}
+  e.stopPropagation();}
+ else if(!e.target.closest('#tip'))hide();});
+document.querySelectorAll('.plate').forEach(pl=>{
+ const vp=pl.querySelector('.vp'),rz=pl.querySelector('.vz');
+ if(!vp)return;
+ const g=vp.firstElementChild;
+ let s=1,tx=0,ty=0,drag=null,moved=0,pd=0,pm=null,tmoved=0,lastTap=0;
+ const P=new Map();
+ const ap=()=>{g.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';};
+ const rst=()=>{s=1;tx=0;ty=0;ap();};
+ const zoom=(f,x,y)=>{const ns=Math.min(8,Math.max(0.2,s*f));
+  tx=x-(x-tx)*ns/s;ty=y-(y-ty)*ns/s;s=ns;ap();};
+ if(rz)rz.addEventListener('click',e=>{e.preventDefault();rst();});
+ vp.addEventListener('dblclick',rst);
+ vp.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();
+  const r=vp.getBoundingClientRect();
+  zoom(Math.exp(-e.deltaY*.002),e.clientX-r.left,e.clientY-r.top);},{passive:false});
+ vp.addEventListener('pointerdown',e=>{
+  P.set(e.pointerId,[e.clientX,e.clientY]);
+  if(P.size===2){const a=[...P.values()];
+   pd=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);
+   pm=[(a[0][0]+a[1][0])/2,(a[0][1]+a[1][1])/2];tmoved=1;}
+  else if(e.pointerType==='mouse'&&e.button===1){e.preventDefault();
+   drag=[e.clientX,e.clientY];moved=0;}});
+ vp.addEventListener('pointermove',e=>{
+  if(!P.has(e.pointerId))return;
+  P.set(e.pointerId,[e.clientX,e.clientY]);
+  if(P.size===2){e.preventDefault();
+   const a=[...P.values()],r=vp.getBoundingClientRect(),
+   d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]),
+   m=[(a[0][0]+a[1][0])/2,(a[0][1]+a[1][1])/2];
+   if(pd)zoom(d/pd,m[0]-r.left,m[1]-r.top);
+   tx+=m[0]-pm[0];ty+=m[1]-pm[1];pd=d;pm=m;ap();}
+  else if(drag){const dx=e.clientX-drag[0],dy=e.clientY-drag[1];
+   if(moved||Math.hypot(dx,dy)>4){moved=1;tx+=dx;ty+=dy;
+    drag=[e.clientX,e.clientY];ap();}}},{passive:false});
+ const up=e=>{if(e.type==='pointercancel')tmoved=1;
+  P.delete(e.pointerId);
+  if(P.size<2)pd=0;
+  if(e.pointerType==='mouse')drag=null;
+  else if(P.size===0){const n=Date.now();
+   if(!tmoved&&n-lastTap<350)rst();
+   lastTap=n;tmoved=0;}};
+ vp.addEventListener('pointerup',up);
+ vp.addEventListener('pointercancel',up);
+ vp.addEventListener('auxclick',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=0;}},true);
+});
+</script>

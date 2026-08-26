@@ -5,7 +5,7 @@ tV Theremin Verification
   a# Verify Sensor Chain
   ## 80-test tasty/hedgehog suite; end-to-end square-wave recovery is
   ## exact (2*512*half); IIR pinned cycle-exact to pure model.
-    i# Clash Design
+    i# Clash Design < P|Port Blocks To Clash|Clash Design
     c# Reference Models
     o# Verified Resolution > R|Impose Pitch Resolution|Verified Resolution
     m# Test Suite
@@ -16,4 +16,5 @@ tV Theremin Verification
     c# Clock Constraint
     o# Timing Evidence > R|Impose Timing Closure|Timing Evidence
     o# Fit Evidence > R|Impose Device Fit|Fit Evidence
+    o# Verified Bitstream > P|Bring Up Bench|Verified Bitstream
     m# Open Toolchain
