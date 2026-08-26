@@ -4,6 +4,8 @@ tT Theremin Instrument
 ## plate. Measure Period decomposes (plate T2) into the DSP block
 ## chain, the same composition drill-down rule as plate D2 in QuadX.
   a# Sense Proximity
+  ## Colpitts LC oscillator per axis: hand capacitance detunes the
+  ## tank, shifting the oscillation period the FPGA measures.
     i# Hand Position
     o# Oscillator Square Wave
     m# LC Oscillator Pair
@@ -29,6 +31,8 @@ tT Theremin Instrument
       i# Raw Period
       o# Filtered Period
   a# Map To Pitch
+  ## Theremin.PitchMap: clamped linear map, period to NCO frequency
+  ## word; constants recalibrate at bench, no RTL change.
     i# Filtered Period
     c# Tuning Constants
     o# Frequency Word
