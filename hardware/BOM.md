@@ -15,8 +15,8 @@ and recording order numbers/ETAs is a human task (see card note).
 | 4 | 1080p30 global-shutter USB3 machine-vision camera + lens | 3 (60°, 35°, 60°) | GS-001 — confirm global shutter AND strobe output in the datasheet before ordering; do not cheap out | $450 | TO ORDER (model TBD at order time) | — |
 | 5 | u-blox MAX-M10S breakout with PPS pin | 4 (3 stations + logger) | SYS-006, AB-001 | $80 | TO ORDER | — |
 | 6 | Raspberry Pi 5 (8 GB) + SSD + SD card | 3 | SYS-005 Ch. 10 recorders | $360 | TO ORDER | — |
-| 7 | FPGA dev board — ULX3S 85F, Lattice ECP5 LFE5U-85F (see note A) | 3 | GS-002 DSP + SYS-006 timebase | $315 ea ($315–945) | **1 ON ORDER** (24 Aug 2026, $315 quoted); ×2 balance deferred pending note A | — |
-| 8 | iCEstick + HX8K breakout | 1 + 1 | dev/bring-up boards | $0 | **OWNED** (theremin) | — |
+| 7 | FPGA dev board — ULX3S 85F, Lattice ECP5 LFE5U-85F (see note A) | 3 | GS-002 DSP + SYS-006 timebase | $315 ea ($315–945) | order of 24 Aug 2026 **canceled 27 Aug**; decision deferred to maiden36 | — |
+| 8 | iCEstick + HX8K breakout | 1 + 1 | dev/bring-up boards | $0 | listed owned; **HX8K not located as of 27 Aug 2026** — if it stays lost, replacement is Alchitry Cu V2 (see results/design-notes/ice40-theremin-fit.md) | — |
 | 9 | MCP3202-class SPI ADC (2 ch, 12-bit) | 3 + 1 spare | lesson 17 I/Q capture front end | $45 | 1 **OWNED** (theremin), 3 TO ORDER | — |
 | 10 | Matek H743 + M10 GNSS | 1 | AB-001 truth logger | $110 | TO ORDER | — |
 | 11 | 4S LiFePO₄ 10 Ah pack + buck converters | 3 | GS-007 station power | $270 | TO ORDER | — |
@@ -113,8 +113,11 @@ against the vendor device database on a laptop, with no FPGA attached.
 Sizing questions do not require buying boards; hardware is for the physical
 questions (oscillator startup, antenna behaviour, PPS discipline).*
 
-The single ULX3S 85F now on order is sufficient to settle this and to run the
-theremin de-risking build; the ×2 balance stays deferred pending the above.
+*(27 Aug: the single-board order was canceled. The theremin de-risking
+build proceeds on iCE40 HX8K-class hardware — see
+results/design-notes/ice40-theremin-fit.md — and the ECP5 purchase
+decision moves wholly to maiden36. The capacity conclusions above are
+from synthesis and are unaffected.)*
 
 **Note B — camera model selection.** Global shutter + hardware strobe
 out + USB3 + C/CS mount for the three lens fields (60°/35°/60° per D6).

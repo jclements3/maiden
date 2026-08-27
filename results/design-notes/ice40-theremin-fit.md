@@ -39,8 +39,8 @@ Any HX8K board hosts the theremin with 3x headroom and >55 MHz timing;
 the UP5K works at a reduced clock with inaudible resolution cost; the
 HX1K cannot fit it at all.
 
-**Buy recommendation: nothing.** The HX8K breakout already owned (BOM #8)
-is measurably sufficient — the Alchitry Cu V2 buys convenience, not
-capability, and the ECP5 ULX3S already on order remains the MAIDEN
-target. Order an iCE40 board only if a second concurrent bench setup is
-wanted.
+**Buy recommendation (revised 27 Aug): Alchitry Cu V2.** The HX8K
+breakout listed as owned could not be located; if it stays lost, the
+Alchitry Cu V2 is the measured replacement (HX8K/cb132: 31% LC, 6 EBR,
+55.6 MHz PASS, onboard USB programming). The ULX3S order was canceled;
+the MAIDEN-class ECP5 decision is deferred to maiden36.
