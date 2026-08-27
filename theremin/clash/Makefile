@@ -78,6 +78,23 @@ pnr: synth
 	    --json $(BUILD)/$(ENTITY).json --textcfg $(BUILD)/$(ENTITY).config \
 	    2>&1 | tee $(BUILD)/$(ENTITY).pnr.log
 
+## --- iCE40 evaluation path (parallel to the ECP5 flow; same Verilog) ---
+## Usage: make pnr-ice40 ICE_DEV=hx8k ICE_PKG=ct256 ICE_FREQ=48
+ICE_DEV  ?= hx8k
+ICE_PKG  ?= ct256
+ICE_FREQ ?= 48
+
+synth-ice40: verilog
+	yosys -p 'read_verilog -sv $$(find $(VLOG_DIR) -name "*.v" | sort | tr "\n" " "); \
+	          synth_ice40 -top $(ENTITY) -json $(BUILD)/$(ENTITY)-ice40.json' \
+	    | tee $(BUILD)/$(ENTITY)-ice40.synth.log
+
+pnr-ice40: synth-ice40
+	nextpnr-ice40 --$(ICE_DEV) --package $(ICE_PKG) --freq $(ICE_FREQ) \
+	    --json $(BUILD)/$(ENTITY)-ice40.json --pcf-allow-unconstrained \
+	    --asc $(BUILD)/$(ENTITY)-$(ICE_DEV).asc \
+	    2>&1 | tee $(BUILD)/$(ENTITY)-$(ICE_DEV).pnr.log
+
 ## Summarise LUT/FF/DSP/BRAM usage and achieved Fmax.
 report: pnr
 	@echo "=== $(ENTITY) on ECP5 $(DEVICE) $(PACKAGE) ==="
