@@ -52,6 +52,23 @@ counter = r
   where
     r = register 0 (r + 1)
 
+-- The loop, drawn. Every wire in the figure is a subexpression:
+--
+--     ┌──────────────────────────────────────────────┐
+--     │                                              │
+--     │      ┌─────┐        ┌──────────────┐         │
+--     └─────▶│  +1 │───────▶│   register   │─────┬───┘
+--            └─────┘        │   reset = 0  │     │
+--                       clk─▶              │     ▼
+--                       rst─▶              │   result
+--                           └──────────────┘
+--
+--     r = register 0 (r + 1)
+--       │             │  │
+--       │             │  └── the feedback path drawn above
+--       │             └───── the adder
+--       └─────────────────── the flip-flop, and the wire it drives
+
 -- Why `r + 1` type-checks: Signal has a Num instance, so arithmetic lifts elementwise over
 -- the stream. `+` on two Signals is an adder.
 

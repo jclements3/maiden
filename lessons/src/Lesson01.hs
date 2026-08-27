@@ -26,6 +26,18 @@ import Clash.Prelude
 topEntity :: Unsigned 8 -> Unsigned 8
 topEntity x = x + 1
 
+-- The whole circuit, and which subexpression each part is:
+--
+--                x                ┌──────┐            result
+--     ───────────────────────────▶  + 1 │──────────────────────▶
+--         unsigned(7 downto 0)   └──────┘    unsigned(7 downto 0)
+--
+--     topEntity x  =  x + 1
+--         │           │   │
+--         │           │   └── the adder box
+--         │           └────── the left wire, width carried by the type of x
+--         └────────────────── the right wire: a function's result IS the output port
+
 ------------------------------------------------------------------------------------------------
 -- 1. THE ONE THAT DOES NOT COMPILE -- and why that is the point.
 ------------------------------------------------------------------------------------------------
