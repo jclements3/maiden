@@ -7,11 +7,16 @@ library
   hs-source-dirs:     src
   exposed-modules:    Lesson01
                       Lesson02
+                      Lesson07
+                      Lesson08
+                      Lesson09
+                      Lesson10
   build-depends:      base
                     , clash-prelude ^>=1.8.1
                     , ghc-typelits-natnormalise
                     , ghc-typelits-extra
                     , ghc-typelits-knownnat
+                    , hedgehog
   default-language:   GHC2021
   default-extensions: DataKinds
                       DeriveAnyClass
