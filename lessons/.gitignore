@@ -1,2 +1,4 @@
 dist-newstyle/
 vhdl/
+src/*.hi
+src/*.o
