@@ -11,6 +11,10 @@ library
                       Lesson04
                       Lesson05
                       Lesson06
+                      Lesson07
+                      Lesson08
+                      Lesson09
+                      Lesson10
                       Lesson11
                       Lesson12
                       Lesson13
@@ -20,6 +24,7 @@ library
                     , ghc-typelits-natnormalise
                     , ghc-typelits-extra
                     , ghc-typelits-knownnat
+                    , hedgehog
   default-language:   GHC2021
   default-extensions: DataKinds
                       DeriveAnyClass
