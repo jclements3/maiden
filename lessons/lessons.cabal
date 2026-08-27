@@ -7,10 +7,16 @@ library
   hs-source-dirs:     src
   exposed-modules:    Lesson01
                       Lesson02
+  exposed-modules:    Lesson01
+                      Lesson02
                       Lesson03
                       Lesson04
                       Lesson05
                       Lesson06
+                      Lesson11
+                      Lesson12
+                      Lesson13
+                      Lesson14
   build-depends:      base
                     , clash-prelude ^>=1.8.1
                     , ghc-typelits-natnormalise
