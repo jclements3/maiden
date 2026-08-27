@@ -7,8 +7,6 @@ library
   hs-source-dirs:     src
   exposed-modules:    Lesson01
                       Lesson02
-  exposed-modules:    Lesson01
-                      Lesson02
                       Lesson03
                       Lesson04
                       Lesson05
