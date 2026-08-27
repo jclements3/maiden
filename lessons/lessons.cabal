@@ -6,6 +6,7 @@ build-type:    Simple
 library
   hs-source-dirs:     src
   exposed-modules:    Lesson01
+                      Lesson02
   build-depends:      base
                     , clash-prelude ^>=1.8.1
                     , ghc-typelits-natnormalise

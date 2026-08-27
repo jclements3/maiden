@@ -11,9 +11,9 @@ module Lesson02 where
 
 import Clash.Prelude
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- The idea
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 -- Lesson 1 built combinational logic: a function from a value to a value. Adding a clock
 -- changes the type, not just the body.
@@ -32,9 +32,9 @@ import Clash.Prelude
 --
 -- One clock of delay. That is the whole of it. A D flip-flop, typed.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- A counter, and the knot it ties
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 -- Read the `where` clause as a circuit, not as a computation: the output of the register
 -- feeds an adder whose result feeds the register's input. A loop in hardware. Haskell's
@@ -55,9 +55,9 @@ counter = r
 -- Why `r + 1` type-checks: Signal has a Num instance, so arithmetic lifts elementwise over
 -- the stream. `+` on two Signals is an adder.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- The top entity: hidden constraints become real ports
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 -- `HiddenClockResetEnable dom` is a constraint, and constraints are not hardware. Clash
 -- cannot generate an entity for something with one still attached. `exposeClockResetEnable`
@@ -77,9 +77,9 @@ topEntity = exposeClockResetEnable counter
 -- Generated VHDL now has clk/rst/en ports and a clocked process, where Lesson 1 had a bare
 -- concurrent assignment. Go read it.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- FAILURE 1: treating a Signal as a value
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 --     counter :: HiddenClockResetEnable dom => Signal dom (Unsigned 8)
 --     counter = r
@@ -87,29 +87,45 @@ topEntity = exposeClockResetEnable counter
 --         r       = register 0 (r + 1)
 --         stopped = r == 255                            -- ERROR
 --
---     * Couldn't match expected type `Bool' with actual type `Signal dom Bool'
+--     src/Lesson02.hs:54:17: error: [GHC-39999]
+--         * Could not deduce `Eq (Signal dom (Unsigned 8))'
+--             arising from a use of `=='
 --
--- `==` compares two values and yields one Bool. Here there is no single moment at which to
--- compare: `r` is the whole history of the wire. The lifted operator `.==.` gives you
--- `Signal dom Bool`, a wire that is high on some cycles and low on others -- which is what a
--- comparator actually is.
+-- Compiled and confirmed 27 Aug 2026 (an earlier draft of this lesson quoted a type-mismatch
+-- error here from memory; the compiler actually says the above). The message is a MISSING
+-- INSTANCE, and that absence is deliberate: `==` would have to compare two infinite streams
+-- and answer with one Bool -- there is no single moment at which to compare. Clash simply
+-- refuses to define it. The lifted operator `.==.` gives you `Signal dom Bool`, a wire that
+-- is high on some cycles and low on others -- which is what a comparator actually is.
 --
 -- Lifted forms:
 --
 --     .==.   ./=.   .<.   .>.   .<=.   .>=.   .&&.   .||.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- FAILURE 2: branching on a wire
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 --     counter10 = r
 --       where
 --         r = register 0 (if r .==. 9 then 0 else r + 1)   -- ERROR
 --
---     * Couldn't match expected type `Bool' with actual type `Signal dom Bool'
+--     src/Lesson02.hs:125:9: error: [GHC-25897]
+--         * Couldn't match type `dom1' with `dom'
+--             arising from a functional dependency between constraints:
+--               `?clock::Clock dom1'
+--                 arising from a use of `register' at src/Lesson02.hs:125:9-16
+--               `?clock::Clock dom'
+--                 arising from the type signature for: counter10 ...
 --
--- This one is worth sitting with, because the error is not pedantry -- it is the semantics of
--- hardware.
+-- Compiled and confirmed 27 Aug 2026 -- and the message is NOT the tidy "expected Bool, got
+-- Signal dom Bool" an earlier draft promised. What happens: `if` demands a plain Bool, so
+-- inference stops unifying `r` with the surrounding domain and the hidden-clock constraint
+-- tears in two (`dom1` vs `dom`). The root cause is still "you branched on a wire"; the
+-- symptom is a constraint tangle. Worth knowing, because you will see this shape again: when
+-- a Signal is used where a value belongs, the error often surfaces in the hidden clock
+-- plumbing rather than at the `if` itself. The mechanics are still the semantics of
+-- hardware:
 --
 -- `if` picks one branch and discards the other. Hardware cannot do that. Both the constant 0
 -- and the incrementer exist as gates, permanently, and a select line chooses which reaches
@@ -129,23 +145,31 @@ counter10 = r
 -- for. Here the latch has no way to appear: `mux` takes three arguments and the type checker
 -- counts.
 
-----------------------------------------------------------------------------------------------
--- FAILURE 3: a top entity that still has a hidden constraint
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+-- NOT A FAILURE: a top entity that still has a hidden constraint (a corrected claim)
+------------------------------------------------------------------------------------------------
 --
 --     topEntity :: HiddenClockResetEnable System => Signal System (Unsigned 8)
 --     topEntity = counter
 --
--- Compiles as Haskell, fails in Clash: there is no clock port for the process to be sensitive
--- to, because the clock was never made real. Every synthesisable top entity takes its clock,
--- reset, and enable as arguments. `exposeClockResetEnable` is the conversion.
+-- An earlier draft claimed this compiles as Haskell but fails in Clash. Tested 27 Aug 2026:
+-- it does NOT fail. Clash 1.8.5 discharges the hidden constraint itself and the generated
+-- entity gains real clock and reset ports (as a record-typed port in the VHDL):
 --
--- The mirror-image function is `withClockResetEnable`, which supplies them -- that is what
--- you use in simulation, below.
+--     port(-- clock
+--          d_0_0  : in Lesson02_topEntity_types.clk_System;
+--          d_1_0  : in Lesson02_topEntity_types.rst_System;
+--          ...
+--
+-- So `exposeClockResetEnable` is about explicitness and port naming, not about making
+-- synthesis possible: with it, you choose the ports and their order; without it, Clash
+-- chooses. Every lesson in this series exposes them explicitly for that reason. The
+-- mirror-image function is `withClockResetEnable`, which supplies clock/reset/enable
+-- instead -- that is what you use in simulation, below.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- Run it without hardware
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 --     cabal repl
 --     ghci> import Clash.Prelude
@@ -164,9 +188,9 @@ counter10 = r
 -- comparing a synthesisable implementation against a pure reference model, cycle for cycle --
 -- is built on the fact that `sampleN` needs nothing but GHC.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- Exercises
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 --
 -- 1. Point topEntity at counter10 and diff the generated VHDL against the plain counter.
 --    Find the comparator and the mux.
