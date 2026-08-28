@@ -95,6 +95,29 @@ pnr-ice40: synth-ice40
 	    --asc $(BUILD)/$(ENTITY)-$(ICE_DEV).asc \
 	    2>&1 | tee $(BUILD)/$(ENTITY)-$(ICE_DEV).pnr.log
 
+## Pack the routed ECP5 design into a flashable bitstream. On the ULX3S:
+##     openFPGALoader -b ulx3s $(BUILD)/$(ENTITY).bit      (SRAM, volatile)
+##     openFPGALoader -b ulx3s -f $(BUILD)/$(ENTITY).bit   (flash, persistent)
+## (fujprog works too if openFPGALoader lacks the board profile.)
+## Note: pnr above runs unconstrained; a real board build needs --lpf with
+## bringup/ulx3s/ulx3s_v20.lpf and top-level ports named to match it.
+bit: pnr
+	ecppack $(BUILD)/$(ENTITY).config $(BUILD)/$(ENTITY).bit
+
+## ULX3S arrival-day blinky: proves board + cable + flow before any
+## theremin logic. Pure Verilog, no Clash needed. Output is tracked in
+## git so the lab machine can flash it with nothing but openFPGALoader.
+ulx3s-blinky:
+	@mkdir -p $(BUILD)/ulx3s
+	yosys -p 'read_verilog bringup/ulx3s/blinky.v; synth_ecp5 -top blinky -json $(BUILD)/ulx3s/blinky.json' \
+	    | tee $(BUILD)/ulx3s/blinky.synth.log
+	nextpnr-ecp5 --85k --package CABGA381 --freq 25 \
+	    --json $(BUILD)/ulx3s/blinky.json \
+	    --lpf bringup/ulx3s/ulx3s_v20.lpf --lpf-allow-unconstrained \
+	    --textcfg $(BUILD)/ulx3s/blinky.config \
+	    2>&1 | tee $(BUILD)/ulx3s/blinky.pnr.log
+	ecppack $(BUILD)/ulx3s/blinky.config bringup/bin/ulx3s-blinky.bit
+
 ## Summarise LUT/FF/DSP/BRAM usage and achieved Fmax.
 report: pnr
 	@echo "=== $(ENTITY) on ECP5 $(DEVICE) $(PACKAGE) ==="

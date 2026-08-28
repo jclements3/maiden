@@ -34,6 +34,22 @@ git clone https://github.com/fpga-theremin/theremin.git \
     ~/projects/maiden/theremin/fpga-theremin
 ```
 
+**GitHub push credentials — do not skip.** Cloning works anonymously, but
+pushing does not, and pushing is how lab work gets home (rule 0). Either:
+
+```sh
+gh auth login        # if the gh CLI is installed; browser device-code flow
+```
+
+or generate an SSH key (`ssh-keygen -t ed25519`), add the public key at
+github.com → Settings → SSH keys, and switch the remotes:
+
+```sh
+git remote set-url origin git@github.com:jclements3/maiden.git   # per repo
+```
+
+Verify with a trivial commit+push before the boards arrive.
+
 ## 2. FPGA toolchain — pinned OSS CAD Suite (minutes)
 
 Pinned release **2026-08-20** (GHDL 7.0.0-dev, Yosys 0.68, nextpnr 0.11.1),
@@ -74,6 +90,12 @@ If the lab machine turns out to be Windows+WSL2 rather than native Linux,
 additionally follow the usbipd-win steps in the theremin repo's
 `fpga/ROADMAP.md` Phase 0 and run `fpga/setup/attach-fpga.sh` per plug-in.
 
+**No sudo on the lab machine?** Everything else in this document works
+unprivileged (ghcup, cabal, and the CAD suite all install under `~`).
+Only this udev step needs root; the fallback is running the flash
+commands under `sudo` (`sudo $(which openFPGALoader) ...` so the CAD
+suite's PATH survives), or asking lab IT to install the rules file.
+
 ## 4. Haskell / Clash toolchain (start early — an hour+ unattended)
 
 The Clash compiler is built from the project's own build plan
@@ -113,7 +135,21 @@ openFPGALoader -b alchitry_cu bin/blinky.bin # our flow, end to end
 pin guesses re-runs nextpnr on `build/arrival/*.json`. Those netlists are
 build outputs and are **not in git** — they regenerate from the Makefile
 targets named in BRINGUP.md, which needs step 4 finished. That is the
-reason step 4 starts before the boards arrive.
+reason step 4 starts before the boards arrive. (They also travel in the
+`maiden.tar.bz2` asset on the repo's `arrival-v1` GitHub release.)
+
+**ULX3S 85F** (the MAIDEN target board, ORDERS.md §1): its arrival-day
+blinky is prebuilt and tracked at `bringup/bin/ulx3s-blinky.bit`
+(pins from the official vendored `bringup/ulx3s/ulx3s_v20.lpf`, so no
+pin-guess caveat here). Plain micro-USB, no programmer needed:
+
+```sh
+openFPGALoader -b ulx3s bin/ulx3s-blinky.bit     # SRAM load, volatile
+```
+
+One LED walks the 8-LED bank, full sweep ~1.3 s. Rebuild from source
+with `make ulx3s-blinky` (needs only the CAD suite, not Haskell); later
+theremin/MAIDEN ECP5 builds pack bitstreams with `make bit`.
 
 ## 6. Verify the development loop
 
@@ -131,10 +167,28 @@ VHDL side (theremin repo): `cd ~/projects/theremin/fpga/phase1` and
 `make sim && make bit && make prog` per that repo's CLAUDE.md — never
 flash what hasn't been simulated.
 
+## What to bring (physical checklist)
+
+Collected from BRINGUP.md and ORDERS.md so nothing forces a second trip:
+
+- **Micro-USB DATA cable** — the single most likely day-one blocker;
+  most micro-USB cables are charge-only. Bring two.
+- 0.1" header strip + access to a soldering iron, in case the Alchitry
+  Cu ships unpopulated (BRINGUP.md step 0).
+- Audio probe parts for BRINGUP.md step 3: 1 kOhm resistor, 10 nF cap,
+  a powered speaker, and jumper wire for the step-4 jumper test.
+- Oscilloscope or frequency counter access for the Colpitts oscillator
+  stage (ORDERS.md §4 calls it the most likely bring-up blocker), plus
+  breadboard + jumpers and the oscillator parts if they have arrived.
+- The ULX3S's 3.5 mm audio jack needs only ordinary headphones or a
+  powered speaker with a 3.5 mm plug.
+
 ## Done when
 
+- [ ] A test commit pushed from the lab machine and pulled at home
+      (proves the credentials step, before anything depends on it)
 - [ ] `cabal test` green in `maiden/theremin/clash`
 - [ ] `make sim` and `make pnr` complete in `maiden/theremin/clash`
-- [ ] `openFPGALoader --detect` sees the board (once hardware arrives)
-- [ ] `bin/blinky.bin` flashed and blinking (once hardware arrives)
-- [ ] A test commit pushed from the lab machine and pulled at home
+- [ ] `openFPGALoader --detect` sees a board (once hardware arrives)
+- [ ] Alchitry Cu: `bin/blinky.bin` flashed and blinking
+- [ ] ULX3S: `bin/ulx3s-blinky.bit` flashed and walking
